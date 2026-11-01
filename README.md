@@ -34,7 +34,7 @@ Aplikasi web prototipe ringan (Phase-1) untuk penerbitan dan verifikasi integrit
 ## 🗂️ Struktur File
 
 ```
-d:/claude/devsecop pengembangan/
+d:/main folder/devsecop pengembangan/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -62,7 +62,7 @@ d:/claude/devsecop pengembangan/
 
 ```bash
 # 1. Pindah ke direktori proyek
-cd "d:\claude\devsecop pengembangan"
+cd "d:\main folder\devsecop pengembangan"
 
 # 2. Instal dependensi (sudah terinstal)
 npm install
