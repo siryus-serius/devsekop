@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@layer base {
+  :root,
+  html.dark {
+    --bg-page: #090d16;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --panel-bg: rgba(15, 23, 42, 0.78);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --card-bg: rgba(30, 41, 59, 0.55);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --input-bg: rgba(15, 23, 42, 0.95);
+    --input-border: #334155;
+    --header-bg: rgba(15, 23, 42, 0.85);
+    --table-hover: rgba(30, 41, 59, 0.4);
+    --table-divide: rgba(51, 65, 85, 0.6);
+    --code-bg: #030712;
+    --code-border: #1e293b;
+    --hero-bg: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7), rgba(30, 58, 138, 0.35));
+    --badge-neutral-bg: rgba(30, 41, 59, 0.8);
+    --badge-neutral-border: #334155;
+    --badge-neutral-text: #cbd5e1;
+    --ambient-1: rgba(37, 99, 235, 0.12);
+    --ambient-2: rgba(99, 102, 241, 0.08);
+    --ambient-3: rgba(16, 185, 129, 0.08);
+  }
+
+  /* Eye-friendly Warm Beige Light Theme */
+  html.light {
+    --bg-page: #f5f2eb;             /* Warm soft beige canvas (no glare) */
+    --text-primary: #292524;        /* Deep warm stone charcoal */
+    --text-secondary: #57534e;      /* Medium stone */
+    --text-muted: #78716c;          /* Soft stone */
+    --panel-bg: rgba(243, 238, 229, 0.9); /* Warm cream panel */
+    --panel-border: #d8d0c2;        /* Muted sand border */
+    --card-bg: rgba(248, 245, 239, 0.85);
+    --card-border: #ded7ca;
+    --input-bg: #fcfbf9;            /* Warm ivory input field */
+    --input-border: #cbc1af;
+    --header-bg: rgba(245, 242, 235, 0.92);
+    --table-hover: rgba(230, 224, 212, 0.5);
+    --table-divide: #dfd7c8;
+    --code-bg: #ebe5d8;
+    --code-border: #d4caa8;
+    --hero-bg: linear-gradient(to right, #ece6da, #e8e0d0, #dfd6c4);
+    --badge-neutral-bg: #e6dfd1;
+    --badge-neutral-border: #cfc5b3;
+    --badge-neutral-text: #44403c;
+    --ambient-1: rgba(217, 119, 6, 0.07);  /* Warm honey amber glow */
+    --ambient-2: rgba(59, 130, 246, 0.05); /* Gentle sky tint */
+    --ambient-3: rgba(16, 185, 129, 0.05); /* Subtle eucalyptus tint */
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Dynamic theme-aware panels */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-border);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.theme-input {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.theme-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.theme-code-block {
+  background-color: var(--code-bg);
+  border: 1px solid var(--code-border);
+  color: var(--text-primary);
+}
+
+.theme-hero {
+  background: var(--hero-bg);
+  border: 1px solid var(--panel-border);
+}
+
+.theme-table tr:hover {
+  background-color: var(--table-hover);
+}
+
+.theme-table-divide {
+  border-color: var(--table-divide);
+}
+
+.theme-badge {
+  background-color: var(--badge-neutral-bg);
+  border: 1px solid var(--badge-neutral-border);
+  color: var(--badge-neutral-text);
+}
+
+/* Soft ambient lighting */
+.ambient-glow-1 {
+  background-color: var(--ambient-1);
+}
+.ambient-glow-2 {
+  background-color: var(--ambient-2);
+}
+.ambient-glow-3 {
+  background-color: var(--ambient-3);
+}
+
+/* Status glows */
+.gradient-glow-emerald {
+  box-shadow: 0 0 45px -10px rgba(16, 185, 129, 0.22);
+}
+
+.gradient-glow-rose {
+  box-shadow: 0 0 45px -10px rgba(244, 63, 94, 0.22);
+}
