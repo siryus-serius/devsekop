@@ -1,4 +1,4 @@
-# 🎓 Digital Diploma Vault — Phase-1 Implementation
+# 🎓 ijazah diusahakan tidak palsu — Phase-1 Implementation
 > **Deterministic SHA-256 Hashing, Dynamic QR Code Engine & Integrity Verification**
 
 Aplikasi web prototipe ringan (Phase-1) untuk penerbitan dan verifikasi integritas ijazah digital tanpa ketergantungan blockchain, smart contract, Web3, ataupun database cloud eksternal.
