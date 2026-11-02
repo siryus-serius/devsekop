@@ -19,6 +19,7 @@ import {
   Calendar,
   GraduationCap,
   RefreshCw,
+  Info,
 } from "lucide-react";
 
 interface VerificationResult {
@@ -134,76 +135,72 @@ function VerifyContent() {
         </div>
       </div>
 
-      {/* Manual Search Form in Card / Card2 */}
-      <div className="card">
-        <div className="card2 glass-panel p-6 shadow-md">
-          <form onSubmit={handleManualSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-              <div className="md:col-span-4">
-                <label className="block text-xs font-semibold opacity-80 uppercase tracking-wider mb-2">
-                  Nomor Seri Ijazah <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="mis. IJZ-2026-CS-001"
-                  value={serialInput}
-                  onChange={(e) => setSerialInput(e.target.value)}
-                  className="input font-mono text-sm"
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-8">
-                <label className="block text-xs font-semibold opacity-80 uppercase tracking-wider mb-2">
-                  Sidik Jari Hash SHA-256 (Opsional / Dari QR Code)
-                </label>
-                <input
-                  type="text"
-                  placeholder="64-karakter hex hash..."
-                  value={hashInput}
-                  onChange={(e) => setHashInput(e.target.value)}
-                  className="input font-mono text-xs"
-                />
-              </div>
+      {/* Manual Search Form */}
+      <div className="glass-panel rounded-2xl p-6 sm:p-8 shadow-sm">
+        <form onSubmit={handleManualSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="md:col-span-4">
+              <label className="block text-xs font-semibold opacity-80 uppercase tracking-wider mb-2">
+                Nomor Seri Ijazah <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="mis. IJZ-2026-CS-001"
+                value={serialInput}
+                onChange={(e) => setSerialInput(e.target.value)}
+                className="input font-mono text-sm"
+                required
+              />
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div className="text-xs opacity-70 flex items-center gap-1.5">
-                <span>💡 Tip:</span>
-                <span>Kosongkan hash untuk memeriksa status nomor seri di basis data.</span>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || !serialInput.trim()}
-                className="btn btn-primary"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Memeriksa Integritas...</span>
-                  </>
-                ) : (
-                  <>
-                    <Search className="w-4 h-4" />
-                    <span>Verifikasi Ijazah</span>
-                  </>
-                )}
-              </button>
+            <div className="md:col-span-8">
+              <label className="block text-xs font-semibold opacity-80 uppercase tracking-wider mb-2">
+                Sidik Jari Hash SHA-256 (Opsional / Dari QR Code)
+              </label>
+              <input
+                type="text"
+                placeholder="64-karakter hex hash..."
+                value={hashInput}
+                onChange={(e) => setHashInput(e.target.value)}
+                className="input font-mono text-xs"
+              />
             </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="text-xs opacity-75 flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+              <span>Petunjuk: Kosongkan field hash untuk memeriksa status nomor seri di basis data.</span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !serialInput.trim()}
+              className="btn btn-primary"
+            >
+              {loading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Memeriksa Integritas...</span>
+                </>
+              ) : (
+                <>
+                  <Search className="w-4 h-4" />
+                  <span>Verifikasi Ijazah</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* Error Banner */}
       {error && (
-        <div className="card">
-          <div className="card2 border-rose-500/30 bg-rose-500/10 p-4 flex items-start gap-3 text-rose-800 dark:text-rose-300 text-sm">
-            <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">Terjadi Kesalahan</p>
-              <p className="text-xs opacity-90">{error}</p>
-            </div>
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 flex items-start gap-3 text-rose-800 dark:text-rose-300 text-sm">
+          <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold">Terjadi Kesalahan</p>
+            <p className="text-xs opacity-90">{error}</p>
           </div>
         </div>
       )}
@@ -213,72 +210,66 @@ function VerifyContent() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
           {/* Main Status Badge */}
           {result.status === "valid" ? (
-            <div className="card">
-              <div className="card2 p-6 sm:p-8 border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-950/40 gradient-glow-emerald">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
-                      <ShieldCheck className="w-10 h-10" />
-                    </div>
-                    <div>
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold tracking-wider uppercase mb-1">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        IJAZAH ASLI & TERVERIFIKASI
-                      </div>
-                      <h2 className="text-xl font-bold">Integritas Dokumen Terbukti Sah</h2>
-                      <p className="opacity-80 text-xs sm:text-sm mt-0.5">
-                        {result.message}
-                      </p>
-                    </div>
+            <div className="rounded-2xl p-6 sm:p-8 border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/30">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
+                    <ShieldCheck className="w-10 h-10" />
                   </div>
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold tracking-wider uppercase mb-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                      IJAZAH ASLI & TERVERIFIKASI
+                    </div>
+                    <h2 className="text-xl font-bold font-serif">Integritas Dokumen Terbukti Sah</h2>
+                    <p className="opacity-80 text-xs sm:text-sm mt-0.5">
+                      {result.message}
+                    </p>
+                  </div>
+                </div>
 
-                  <div className="text-right hidden sm:block">
-                    <span className="text-xs opacity-70 block">Metode Validasi</span>
-                    <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">
-                      SHA-256 Hash Matching
-                    </span>
-                  </div>
+                <div className="text-right hidden sm:block">
+                  <span className="text-xs opacity-70 block">Metode Validasi</span>
+                  <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                    SHA-256 Hash Matching
+                  </span>
                 </div>
               </div>
             </div>
           ) : result.status === "invalid" ? (
-            <div className="card">
-              <div className="card2 p-6 sm:p-8 border-rose-500/40 bg-rose-500/10 dark:bg-rose-950/40 gradient-glow-rose">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-600 dark:text-rose-400">
-                      <ShieldAlert className="w-10 h-10" />
+            <div className="rounded-2xl p-6 sm:p-8 border border-rose-500/30 bg-rose-500/10 dark:bg-rose-950/30">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-600 dark:text-rose-400">
+                    <ShieldAlert className="w-10 h-10" />
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-800 dark:text-rose-300 text-xs font-bold tracking-wider uppercase mb-1">
+                      <XCircle className="w-3.5 h-3.5 text-rose-500" />
+                      DATA TIDAK COCOK / TELAH DIMODIFIKASI
                     </div>
-                    <div>
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-800 dark:text-rose-300 text-xs font-bold tracking-wider uppercase mb-1">
-                        <XCircle className="w-3.5 h-3.5 text-rose-500" />
-                        DATA TIDAK COCOK / TELAH DIMODIFIKASI
-                      </div>
-                      <h2 className="text-xl font-bold">Peringatan: Potensi Pemalsuan Dokumen</h2>
-                      <p className="opacity-80 text-xs sm:text-sm mt-0.5">
-                        {result.message}
-                      </p>
-                    </div>
+                    <h2 className="text-xl font-bold font-serif">Peringatan: Potensi Pemalsuan Dokumen</h2>
+                    <p className="opacity-80 text-xs sm:text-sm mt-0.5">
+                      {result.message}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="card">
-              <div className="card2 p-6 sm:p-8 border-amber-500/40 bg-amber-500/10 dark:bg-amber-950/40">
-                <div className="flex items-center gap-4">
-                  <div className="p-3.5 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-600 dark:text-amber-400">
-                    <AlertTriangle className="w-10 h-10" />
+            <div className="rounded-2xl p-6 sm:p-8 border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/30">
+              <div className="flex items-center gap-4">
+                <div className="p-3.5 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-600 dark:text-amber-400">
+                  <AlertTriangle className="w-10 h-10" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-800 dark:text-amber-300 text-xs font-bold tracking-wider uppercase mb-1">
+                    NOMOR SERI TIDAK DITEMUKAN
                   </div>
-                  <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-800 dark:text-amber-300 text-xs font-bold tracking-wider uppercase mb-1">
-                      NOMOR SERI TIDAK DITEMUKAN
-                    </div>
-                    <h2 className="text-xl font-bold">Data Ijazah Tidak Terdaftar</h2>
-                    <p className="opacity-80 text-xs sm:text-sm mt-0.5">
-                      {result.message}
-                    </p>
-                  </div>
+                  <h2 className="text-xl font-bold font-serif">Data Ijazah Tidak Terdaftar</h2>
+                  <p className="opacity-80 text-xs sm:text-sm mt-0.5">
+                    {result.message}
+                  </p>
                 </div>
               </div>
             </div>
@@ -428,20 +419,18 @@ function VerifyContent() {
 
       {/* Verification Instructions */}
       {!result && !loading && (
-        <div className="card">
-          <div className="card2 glass-card p-6 text-sm space-y-3">
-            <h3 className="font-semibold text-base flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              Cara Kerja Verifikasi Kriptografis
-            </h3>
-            <p className="opacity-80 leading-relaxed">
-              Sistem ini menggunakan algoritma hash deterministik <strong>SHA-256</strong>. Setiap ijazah yang diterbitkan memiliki sidik jari unik 256-bit (64 karakter heksadesimal) yang dihitung dari kombinasi nomor seri, NIM, nama mahasiswa, dan tanggal penerbitan.
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-xs opacity-75">
-              <li>Jika salah satu huruf atau angka diubah (misal nama atau tanggal), sidik jari SHA-256 akan berubah secara total (*avalanche effect*).</li>
-              <li>Pemindai QR code pada dokumen fisik akan secara otomatis mengarahkan ke halaman ini beserta hash untuk verifikasi silang otomatis.</li>
-            </ul>
-          </div>
+        <div className="glass-panel rounded-2xl p-6 text-sm space-y-3">
+          <h3 className="font-semibold text-base flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+            Cara Kerja Verifikasi Kriptografis
+          </h3>
+          <p className="opacity-80 leading-relaxed">
+            Sistem ini menggunakan algoritma hash deterministik <strong>SHA-256</strong>. Setiap ijazah yang diterbitkan memiliki sidik jari unik 256-bit (64 karakter heksadesimal) yang dihitung dari kombinasi nomor seri, NIM, nama mahasiswa, dan tanggal penerbitan.
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-xs opacity-75">
+            <li>Jika salah satu huruf atau angka diubah (misal nama atau tanggal), sidik jari SHA-256 akan berubah secara total (*avalanche effect*).</li>
+            <li>Pemindai QR code pada dokumen fisik akan secara otomatis mengarahkan ke halaman ini beserta hash untuk verifikasi silang otomatis.</li>
+          </ul>
         </div>
       )}
     </div>

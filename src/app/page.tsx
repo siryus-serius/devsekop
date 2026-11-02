@@ -12,7 +12,6 @@ import {
   Check,
   ExternalLink,
   GraduationCap,
-  Sparkles,
   Database,
   AlertCircle,
   FileText,
@@ -186,45 +185,39 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      {/* Hero Banner with Cyberpunk Neon Card Border */}
-      <div ref={heroRef} className="card">
-        <div className="card2 theme-hero p-8 sm:p-10 shadow-sm relative overflow-hidden">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider theme-badge">
-              <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-              Phase-1 Minimalist Architecture
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Digital Diploma Vault & QR Code Engine
-            </h1>
-            <p className="opacity-80 text-sm sm:text-base leading-relaxed">
-              Menghasilkan sidik jari kriptografis <strong>SHA-256 deterministik</strong> dari data ijazah, memproduksi QR Code dinamis beresolusi tinggi, dan menyediakan portal verifikasi integritas publik secara instan.
-            </p>
+      {/* Hero Banner */}
+      <div ref={heroRef} className="theme-hero rounded-2xl p-8 sm:p-10 shadow-sm relative overflow-hidden border border-black/10 dark:border-white/10">
+        <div className="max-w-3xl space-y-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-serif">
+            Digital Diploma Vault & QR Code Engine
+          </h1>
+          <p className="opacity-80 text-sm sm:text-base leading-relaxed">
+            Menghasilkan sidik jari kriptografis <strong>SHA-256 deterministik</strong> dari data ijazah resmi, memproduksi QR Code dinamis beresolusi tinggi, dan menyediakan portal verifikasi integritas publik secara instan.
+          </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <span className="text-xs opacity-70">Pilih Data Contoh:</span>
-              <button
-                type="button"
-                onClick={() => handlePreset("cs")}
-                className="btn btn-sm btn-secondary"
-              >
-                Demo 1 (Budi - TI)
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePreset("is")}
-                className="btn btn-sm btn-secondary"
-              >
-                Demo 2 (Siti - SI)
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePreset("med")}
-                className="btn btn-sm btn-primary"
-              >
-                + Data Acak Baru
-              </button>
-            </div>
+          <div className="flex flex-wrap items-center gap-2.5 pt-2">
+            <span className="text-xs opacity-70 font-medium">Contoh Data Cepat:</span>
+            <button
+              type="button"
+              onClick={() => handlePreset("cs")}
+              className="btn btn-sm btn-secondary"
+            >
+              Informatika (Budi)
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePreset("is")}
+              className="btn btn-sm btn-secondary"
+            >
+              Sist. Informasi (Siti)
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePreset("med")}
+              className="btn btn-sm btn-secondary"
+            >
+              Kedokteran (Rian)
+            </button>
           </div>
         </div>
       </div>
@@ -407,6 +400,8 @@ export default function DashboardPage() {
                   <img
                     src={lastResult.qrCodeUrl}
                     alt={`QR Code ${lastResult.serialNumber}`}
+                    width={224}
+                    height={224}
                     className="w-56 h-56 object-contain rounded-lg"
                   />
                   <div className="mt-3 text-center">
@@ -493,10 +488,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Database Store List (Mock Store Explorer) in Card / Card2 */}
-      <div ref={tableRef} className="card">
-        <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+      {/* Database Store List (Mock Store Explorer) */}
+      <div ref={tableRef} className="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-purple-600/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                 <Database className="w-5 h-5" />
@@ -587,6 +581,5 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

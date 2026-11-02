@@ -198,8 +198,8 @@ h1, h2, h3, .font-serif, .display-head {
 }
 
 /* ─────────────────────────────────────────────────────────
-   From Uiverse.io by yashasvi9199 - Cyberpunk Neon Gradient Cards & Form
-   Adapted to Hallmark Multi-Theme (Dark / Light)
+   Refined Elevated Focus Cards & Form (.card, .card2, .form)
+   Antislop Design System (Emerald & Sapphire Brand Palette)
    ───────────────────────────────────────────────────────── */
 .form {
   display: flex;
@@ -209,28 +209,28 @@ h1, h2, h3, .font-serif, .display-head {
   padding-right: 2em;
   padding-bottom: 0.4em;
   background-color: var(--panel-bg);
-  border-radius: 25px;
+  border-radius: 20px;
   transition: background-color 0.3s ease;
 }
 
 .card {
-  background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+  background-image: linear-gradient(163deg, rgba(16, 185, 129, 0.4) 0%, rgba(37, 99, 235, 0.4) 100%);
   border-radius: 24px;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
   padding: 2px;
 }
 
 html.light .card {
-  background-image: linear-gradient(163deg, rgba(16, 185, 129, 0.45) 0%, rgba(59, 130, 246, 0.45) 100%);
-  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.08);
+  background-image: linear-gradient(163deg, rgba(16, 185, 129, 0.35) 0%, rgba(37, 99, 235, 0.35) 100%);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
 }
 
 .card:hover {
-  box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
+  box-shadow: 0px 4px 24px 0px rgba(16, 185, 129, 0.18);
 }
 
 html.light .card:hover {
-  box-shadow: 0px 0px 24px 2px rgba(16, 185, 129, 0.22);
+  box-shadow: 0px 6px 20px 0px rgba(37, 99, 235, 0.12);
 }
 
 :where(.card2) {
@@ -246,30 +246,31 @@ html.light .card:hover {
 }
 
 .card2:hover {
-  transform: scale(0.995);
+  transform: scale(0.998);
   border-radius: 20px;
 }
 
 /* ─────────────────────────────────────────────────────────
    From Uiverse.io by cssbuttons-io - Ripple Scale Button (.btn)
+   Refined for Antislop: Natural Sentence-case Typography
    ───────────────────────────────────────────────────────── */
 .btn {
   position: relative;
-  font-size: 14px;
-  text-transform: uppercase;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
   text-decoration: none;
-  padding: 0.8em 2em;
+  padding: 0.65em 1.5em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
-  border-radius: 6em;
+  border-radius: 9999px;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   font-family: var(--font-inter);
-  font-weight: 600;
-  letter-spacing: 0.04em;
   color: #0f172a;
   background-color: #ffffff;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
