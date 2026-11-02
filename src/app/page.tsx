@@ -20,6 +20,7 @@ import {
   Calendar,
   Building,
 } from "lucide-react";
+import { useFadeInUp, useStaggerFadeIn } from "@/lib/animations";
 
 interface DiplomaData {
   serialNumber: string;
@@ -67,6 +68,12 @@ export default function DashboardPage() {
   // Copy status
   const [copiedHash, setCopiedHash] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Anime.js animation refs
+  const heroRef = useFadeInUp<HTMLDivElement>({ duration: 900 });
+  const formRef = useFadeInUp<HTMLDivElement>({ delay: 150, duration: 800 });
+  const previewRef = useFadeInUp<HTMLDivElement>({ delay: 300, duration: 800 });
+  const tableRef = useFadeInUp<HTMLDivElement>({ delay: 200, duration: 800 });
 
   // Fetch initial stored list
   useEffect(() => {
@@ -179,205 +186,209 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      {/* Hero Banner with Eye-Friendly Beige / Dark adaptation */}
-      <div className="relative overflow-hidden rounded-3xl theme-hero p-8 sm:p-10 shadow-sm transition-all duration-300">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider theme-badge">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-            Phase-1 Minimalist Architecture
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Digital Diploma Vault & QR Code Engine
-          </h1>
-          <p className="opacity-80 text-sm sm:text-base leading-relaxed">
-            Menghasilkan sidik jari kriptografis <strong>SHA-256 deterministik</strong> dari data ijazah, memproduksi QR Code dinamis beresolusi tinggi, dan menyediakan portal verifikasi integritas publik secara instan.
-          </p>
+      {/* Hero Banner with Cyberpunk Neon Card Border */}
+      <div ref={heroRef} className="card">
+        <div className="card2 theme-hero p-8 sm:p-10 shadow-sm relative overflow-hidden">
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider theme-badge">
+              <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+              Phase-1 Minimalist Architecture
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              Digital Diploma Vault & QR Code Engine
+            </h1>
+            <p className="opacity-80 text-sm sm:text-base leading-relaxed">
+              Menghasilkan sidik jari kriptografis <strong>SHA-256 deterministik</strong> dari data ijazah, memproduksi QR Code dinamis beresolusi tinggi, dan menyediakan portal verifikasi integritas publik secara instan.
+            </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <span className="text-xs opacity-70">Pilih Data Contoh:</span>
-            <button
-              type="button"
-              onClick={() => handlePreset("cs")}
-              className="px-2.5 py-1 rounded-lg text-xs theme-badge hover:opacity-100 transition cursor-pointer"
-            >
-              Demo 1 (Budi - TI)
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePreset("is")}
-              className="px-2.5 py-1 rounded-lg text-xs theme-badge hover:opacity-100 transition cursor-pointer"
-            >
-              Demo 2 (Siti - SI)
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePreset("med")}
-              className="px-2.5 py-1 rounded-lg text-xs bg-blue-600/15 border border-blue-600/30 text-blue-600 dark:text-blue-300 hover:bg-blue-600/25 transition cursor-pointer font-medium"
-            >
-              + Data Acak Baru
-            </button>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <span className="text-xs opacity-70">Pilih Data Contoh:</span>
+              <button
+                type="button"
+                onClick={() => handlePreset("cs")}
+                className="btn btn-sm btn-secondary"
+              >
+                Demo 1 (Budi - TI)
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePreset("is")}
+                className="btn btn-sm btn-secondary"
+              >
+                Demo 2 (Siti - SI)
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePreset("med")}
+                className="btn btn-sm btn-primary"
+              >
+                + Data Acak Baru
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Grid: Form (Left) & QR Code Live Preview (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Form Section (7 cols) */}
-        <div className="lg:col-span-7 glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
-          <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <FileText className="w-5 h-5" />
+        {/* Form Section (7 cols) in Card / Card2 */}
+        <div ref={formRef} className="lg:col-span-7 card">
+          <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold">Metadata Ijazah</h2>
+                  <p className="text-xs opacity-70">Parameter untuk perhitungan SHA-256 deterministik</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg font-bold">Metadata Ijazah</h2>
-                <p className="text-xs opacity-70">Parameter untuk perhitungan SHA-256 deterministik</p>
+              <span className="text-xs px-2.5 py-1 rounded-full font-mono theme-badge">
+                Form Penerbit
+              </span>
+            </div>
+
+            {error && (
+              <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Serial Number */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <Hash className="w-3.5 h-3.5 text-blue-500" />
+                  Nomor Seri Ijazah <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.serialNumber}
+                  onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
+                  placeholder="mis. IJZ-2026-CS-001"
+                  className="input font-mono text-sm"
+                  required
+                />
+              </div>
+
+              {/* Student ID / NIM */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <Hash className="w-3.5 h-3.5 text-indigo-500" />
+                  NIM / Student ID <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.studentId}
+                  onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
+                  placeholder="mis. 123200045"
+                  className="input font-mono text-sm"
+                  required
+                />
+              </div>
+
+              {/* Student Name */}
+              <div className="sm:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-blue-500" />
+                  Nama Lengkap Mahasiswa <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.studentName}
+                  onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
+                  placeholder="mis. Budi Santoso"
+                  className="input text-sm"
+                  required
+                />
+              </div>
+
+              {/* Issue Date */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                  Tanggal Penerbitan <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={formData.issueDate}
+                  onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                  className="input text-sm"
+                  required
+                />
+              </div>
+
+              {/* Major */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
+                  Program Studi
+                </label>
+                <input
+                  type="text"
+                  value={formData.major || ""}
+                  onChange={(e) => setFormData({ ...formData, major: e.target.value })}
+                  placeholder="mis. Teknik Informatika"
+                  className="input text-sm"
+                />
+              </div>
+
+              {/* University */}
+              <div className="sm:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-purple-500" />
+                  Institusi Penerbit
+                </label>
+                <input
+                  type="text"
+                  value={formData.university || ""}
+                  onChange={(e) => setFormData({ ...formData, university: e.target.value })}
+                  placeholder="mis. Universitas Sains & Teknologi Indonesia"
+                  className="input text-sm"
+                />
               </div>
             </div>
-            <span className="text-xs px-2.5 py-1 rounded-full font-mono theme-badge">
-              Form Penerbit
-            </span>
-          </div>
 
-          {error && (
-            <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
-              <span>{error}</span>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-black/10 dark:border-white/10">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => handleGenerateOrRegenerate(false)}
+                className="btn btn-primary flex-1"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Memproses SHA-256...</span>
+                  </>
+                ) : (
+                  <>
+                    <QrCode className="w-4 h-4" />
+                    <span>Generate QR Code</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => handleGenerateOrRegenerate(true)}
+                className="btn btn-secondary"
+                title="Kalkulasi ulang hash dan perbarui QR Code di memori"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Regenerate</span>
+              </button>
             </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Serial Number */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <Hash className="w-3.5 h-3.5 text-blue-500" />
-                Nomor Seri Ijazah <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.serialNumber}
-                onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
-                placeholder="mis. IJZ-2026-CS-001"
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-mono"
-                required
-              />
-            </div>
-
-            {/* Student ID / NIM */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <Hash className="w-3.5 h-3.5 text-indigo-500" />
-                NIM / Student ID <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.studentId}
-                onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
-                placeholder="mis. 123200045"
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-mono"
-                required
-              />
-            </div>
-
-            {/* Student Name */}
-            <div className="sm:col-span-2 space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-blue-500" />
-                Nama Lengkap Mahasiswa <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.studentName}
-                onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
-                placeholder="mis. Budi Santoso"
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm"
-                required
-              />
-            </div>
-
-            {/* Issue Date */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                Tanggal Penerbitan <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="date"
-                value={formData.issueDate}
-                onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm"
-                required
-              />
-            </div>
-
-            {/* Major */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
-                Program Studi
-              </label>
-              <input
-                type="text"
-                value={formData.major || ""}
-                onChange={(e) => setFormData({ ...formData, major: e.target.value })}
-                placeholder="mis. Teknik Informatika"
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm"
-              />
-            </div>
-
-            {/* University */}
-            <div className="sm:col-span-2 space-y-1.5">
-              <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                <Building className="w-3.5 h-3.5 text-purple-500" />
-                Institusi Penerbit
-              </label>
-              <input
-                type="text"
-                value={formData.university || ""}
-                onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-                placeholder="mis. Universitas Sains & Teknologi Indonesia"
-                className="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-black/10 dark:border-white/10">
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => handleGenerateOrRegenerate(false)}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition shadow-md shadow-blue-600/25 disabled:opacity-50 cursor-pointer"
-            >
-              {loading ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Memproses SHA-256...</span>
-                </>
-              ) : (
-                <>
-                  <QrCode className="w-4 h-4" />
-                  <span>Generate QR Code</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => handleGenerateOrRegenerate(true)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl theme-badge hover:opacity-100 font-medium text-sm transition disabled:opacity-50 cursor-pointer"
-              title="Kalkulasi ulang hash dan perbarui QR Code di memori"
-            >
-              <RefreshCw className="w-4 h-4 opacity-70" />
-              <span>Regenerate</span>
-            </button>
           </div>
         </div>
 
-        {/* Live Preview Section (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+        {/* Live Preview Section (5 cols) in Card / Card2 */}
+        <div ref={previewRef} className="lg:col-span-5 card">
+          <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <QrCode className="w-5 h-5 text-emerald-500" />
@@ -414,7 +425,7 @@ export default function DashboardPage() {
                     </span>
                     <button
                       onClick={() => copyText(lastResult.hash, "hash")}
-                      className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline font-mono transition cursor-pointer"
+                      className="btn btn-sm btn-secondary"
                     >
                       {copiedHash ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                       {copiedHash ? "Tersalin!" : "Salin Hash"}
@@ -430,7 +441,7 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={downloadQRCode}
-                      className="inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl theme-badge hover:opacity-100 text-xs font-medium transition cursor-pointer"
+                      className="btn btn-sm btn-secondary w-full"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Unduh PNG
@@ -438,7 +449,7 @@ export default function DashboardPage() {
 
                     <button
                       onClick={() => copyText(lastResult.verifyUrl, "link")}
-                      className="inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl theme-badge hover:opacity-100 text-xs font-medium transition cursor-pointer"
+                      className="btn btn-sm btn-secondary w-full"
                     >
                       {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                       Salin Link URL
@@ -448,7 +459,7 @@ export default function DashboardPage() {
                   {/* Direct Link to Verification Page */}
                   <Link
                     href={`/verify?serial=${encodeURIComponent(lastResult.serialNumber)}&hash=${lastResult.hash}`}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs tracking-wide uppercase transition shadow-md shadow-emerald-600/20"
+                    className="btn btn-emerald w-full"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     <span>Uji Halaman Verifikasi (Valid)</span>
@@ -458,10 +469,10 @@ export default function DashboardPage() {
                   {/* Tampered Simulation Link (demonstrating Red Badge!) */}
                   <Link
                     href={`/verify?serial=${encodeURIComponent(lastResult.serialNumber)}&hash=${lastResult.hash.slice(0, -4)}dead`}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-500/30 font-medium text-xs transition"
+                    className="btn btn-rose w-full"
                     title="Simulasikan pemalsuan data dengan mengubah 4 digit terakhir hash"
                   >
-                    <span>⚠️ Uji Simulasi Pemalsuan (Cek Red Badge)</span>
+                    <span>Simulasi Pemalsuan (Cek Red Badge)</span>
                   </Link>
                 </div>
               </div>
@@ -482,96 +493,98 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Database Store List (Mock Store Explorer) */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-600/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-              <Database className="w-5 h-5" />
+      {/* Database Store List (Mock Store Explorer) in Card / Card2 */}
+      <div ref={tableRef} className="card">
+        <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-purple-600/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                <Database className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold">Repositori Ijazah Tersimpan (In-Memory Store)</h2>
+                <p className="text-xs opacity-70">
+                  Data aktif yang dapat diverifikasi melalui API <code className="text-blue-500 font-mono">/api/verify</code>
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold">Repositori Ijazah Tersimpan (In-Memory Store)</h2>
-              <p className="text-xs opacity-70">
-                Data aktif yang dapat diverifikasi melalui API <code className="text-blue-500 font-mono">/api/verify</code>
-              </p>
-            </div>
+
+            <button
+              onClick={fetchStoredDiplomas}
+              disabled={loadingList}
+              className="btn btn-sm btn-secondary"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />
+              <span>Muat Ulang Data</span>
+            </button>
           </div>
 
-          <button
-            onClick={fetchStoredDiplomas}
-            disabled={loadingList}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs theme-badge hover:opacity-100 transition cursor-pointer"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />
-            <span>Muat Ulang Data</span>
-          </button>
-        </div>
+          {/* Table of stored diplomas */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs theme-table">
+              <thead>
+                <tr className="border-b border-black/10 dark:border-white/10 opacity-70 font-semibold uppercase tracking-wider">
+                  <th className="py-3 px-3">Nomor Seri</th>
+                  <th className="py-3 px-3">Nama Mahasiswa</th>
+                  <th className="py-3 px-3">NIM</th>
+                  <th className="py-3 px-3">Tanggal Terbit</th>
+                  <th className="py-3 px-3">SHA-256 Hash</th>
+                  <th className="py-3 px-3 text-right">Aksi Verifikasi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y theme-table-divide font-mono">
+                {storedList.length > 0 ? (
+                  storedList.map((item) => (
+                    <tr key={item.serialNumber} className="transition font-sans">
+                      <td className="py-3.5 px-3 font-mono font-bold text-blue-600 dark:text-blue-400">
+                        {item.serialNumber}
+                      </td>
+                      <td className="py-3.5 px-3 font-semibold">{item.studentName}</td>
+                      <td className="py-3.5 px-3 font-mono opacity-80">{item.studentId}</td>
+                      <td className="py-3.5 px-3 opacity-70">{item.issueDate}</td>
+                      <td className="py-3.5 px-3">
+                        <span className="font-mono text-[11px] theme-code-block px-2 py-1 rounded" title={item.hash}>
+                          {item.hash.slice(0, 10)}...{item.hash.slice(-8)}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-3 text-right space-x-2">
+                        <button
+                          onClick={() => {
+                            setFormData({
+                              serialNumber: item.serialNumber,
+                              studentId: item.studentId,
+                              studentName: item.studentName,
+                              issueDate: item.issueDate,
+                              major: item.major,
+                              university: item.university,
+                            });
+                            handleGenerateOrRegenerate(true);
+                          }}
+                          className="btn btn-sm btn-secondary"
+                        >
+                          Buka QR
+                        </button>
 
-        {/* Table of stored diplomas */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs theme-table">
-            <thead>
-              <tr className="border-b border-black/10 dark:border-white/10 opacity-70 font-semibold uppercase tracking-wider">
-                <th className="py-3 px-3">Nomor Seri</th>
-                <th className="py-3 px-3">Nama Mahasiswa</th>
-                <th className="py-3 px-3">NIM</th>
-                <th className="py-3 px-3">Tanggal Terbit</th>
-                <th className="py-3 px-3">SHA-256 Hash</th>
-                <th className="py-3 px-3 text-right">Aksi Verifikasi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y theme-table-divide font-mono">
-              {storedList.length > 0 ? (
-                storedList.map((item) => (
-                  <tr key={item.serialNumber} className="transition font-sans">
-                    <td className="py-3.5 px-3 font-mono font-bold text-blue-600 dark:text-blue-400">
-                      {item.serialNumber}
-                    </td>
-                    <td className="py-3.5 px-3 font-semibold">{item.studentName}</td>
-                    <td className="py-3.5 px-3 font-mono opacity-80">{item.studentId}</td>
-                    <td className="py-3.5 px-3 opacity-70">{item.issueDate}</td>
-                    <td className="py-3.5 px-3">
-                      <span className="font-mono text-[11px] theme-code-block px-2 py-1 rounded" title={item.hash}>
-                        {item.hash.slice(0, 10)}...{item.hash.slice(-8)}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-3 text-right space-x-2">
-                      <button
-                        onClick={() => {
-                          setFormData({
-                            serialNumber: item.serialNumber,
-                            studentId: item.studentId,
-                            studentName: item.studentName,
-                            issueDate: item.issueDate,
-                            major: item.major,
-                            university: item.university,
-                          });
-                          handleGenerateOrRegenerate(true);
-                        }}
-                        className="px-2.5 py-1 rounded theme-badge hover:opacity-100 text-xs transition cursor-pointer"
-                      >
-                        Buka QR
-                      </button>
-
-                      <Link
-                        href={`/verify?serial=${encodeURIComponent(item.serialNumber)}&hash=${item.hash}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 border border-emerald-600/30 text-xs transition font-semibold"
-                      >
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        Verifikasi
-                      </Link>
+                        <Link
+                          href={`/verify?serial=${encodeURIComponent(item.serialNumber)}&hash=${item.hash}`}
+                          className="btn btn-sm btn-emerald"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                          Verifikasi
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center opacity-60 font-sans">
+                      Tidak ada rekaman ijazah.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center opacity-60 font-sans">
-                    Tidak ada rekaman ijazah.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
