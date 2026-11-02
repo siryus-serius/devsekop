@@ -275,13 +275,92 @@ function VerifyContent() {
             </div>
           )}
 
-          {/* Cryptographic Comparison Section */}
-          <div className="card">
-            <div className="card2 glass-panel p-6">
-              <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
+          {/* Official Verification Ledger & Cryptographic Audit */}
+          <div className="glass-panel rounded-2xl border p-6 sm:p-8 space-y-8 shadow-sm">
+            {/* Header Record */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg font-serif">Metadata Resmi Ijazah</h3>
+                  <p className="text-xs opacity-70">Data terdaftar secara sah dalam repositori verifikasi</p>
+                </div>
+              </div>
+              {result.diploma?.serialNumber && (
+                <div className="text-left sm:text-right">
+                  <span className="text-[11px] opacity-60 block uppercase font-mono">No. Seri Resmi</span>
+                  <span className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">
+                    {result.diploma.serialNumber}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Official Credential Definition List (Clean Linear Ledger - No Bento Grid) */}
+            {result.diploma && (
+              <dl className="divide-y divide-black/10 dark:divide-white/10 text-sm">
+                <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
+                  <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-blue-500" />
+                    Nama Lengkap Mahasiswa
+                  </dt>
+                  <dd className="mt-1 sm:mt-0 sm:col-span-2 font-bold text-base">
+                    {result.diploma.studentName}
+                  </dd>
+                </div>
+
+                <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
+                  <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
+                    <Hash className="w-3.5 h-3.5 text-indigo-500" />
+                    NIM / Student ID
+                  </dt>
+                  <dd className="mt-1 sm:mt-0 sm:col-span-2 font-mono font-semibold">
+                    {result.diploma.studentId}
+                  </dd>
+                </div>
+
+                <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
+                  <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
+                    Program Studi
+                  </dt>
+                  <dd className="mt-1 sm:mt-0 sm:col-span-2 font-medium">
+                    {result.diploma.major || "Program Sarjana"}
+                  </dd>
+                </div>
+
+                <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
+                  <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
+                    <Building className="w-3.5 h-3.5 text-purple-500" />
+                    Institusi Penerbit
+                  </dt>
+                  <dd className="mt-1 sm:mt-0 sm:col-span-2 font-medium">
+                    {result.diploma.university || "Universitas Terakreditasi Resmi"}
+                  </dd>
+                </div>
+
+                <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
+                  <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                    Tanggal Penerbitan
+                  </dt>
+                  <dd className="mt-1 sm:mt-0 sm:col-span-2 font-medium">
+                    {result.diploma.issueDate}
+                  </dd>
+                </div>
+              </dl>
+            )}
+
+            {/* Cryptographic Proof Section */}
+            <div className="pt-4 border-t border-black/10 dark:border-white/10 space-y-4">
+              <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4 text-blue-500" />
-                Audit Integritas Kriptografis (SHA-256)
-              </h3>
+                <h4 className="text-xs font-semibold uppercase tracking-wider opacity-80">
+                  Audit Integritas Kriptografis (SHA-256)
+                </h4>
+              </div>
 
               <div className="space-y-3 font-mono text-xs">
                 {/* Input Hash */}
@@ -348,72 +427,6 @@ function VerifyContent() {
               </div>
             </div>
           </div>
-
-          {/* Certificate Detail Card */}
-          {result.diploma && (
-            <div className="card">
-              <div className="card2 glass-panel p-6">
-                <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-indigo-500" />
-                  Metadata Resmi Ijazah
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl theme-card">
-                    <span className="text-xs opacity-70 flex items-center gap-1.5 mb-1">
-                      <User className="w-3.5 h-3.5 text-blue-500" />
-                      Nama Pemegang Ijazah
-                    </span>
-                    <p className="text-base font-bold">{result.diploma.studentName}</p>
-                  </div>
-
-                  <div className="p-4 rounded-xl theme-card">
-                    <span className="text-xs opacity-70 flex items-center gap-1.5 mb-1">
-                      <Hash className="w-3.5 h-3.5 text-indigo-500" />
-                      Nomor Induk Mahasiswa (NIM)
-                    </span>
-                    <p className="text-base font-mono font-bold">{result.diploma.studentId}</p>
-                  </div>
-
-                  <div className="p-4 rounded-xl theme-card">
-                    <span className="text-xs opacity-70 flex items-center gap-1.5 mb-1">
-                      <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
-                      Program Studi
-                    </span>
-                    <p className="text-base font-semibold">
-                      {result.diploma.major || "Program Sarjana"}
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl theme-card">
-                    <span className="text-xs opacity-70 flex items-center gap-1.5 mb-1">
-                      <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                      Tanggal Kelulusan / Penerbitan
-                    </span>
-                    <p className="text-base font-semibold">{result.diploma.issueDate}</p>
-                  </div>
-
-                  <div className="sm:col-span-2 p-4 rounded-xl theme-card flex items-center justify-between">
-                    <div>
-                      <span className="text-xs opacity-70 flex items-center gap-1.5 mb-1">
-                        <Building className="w-3.5 h-3.5 text-purple-500" />
-                        Institusi Penerbit
-                      </span>
-                      <p className="text-base font-semibold">
-                        {result.diploma.university || "Universitas Terakreditasi Resmi"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[11px] opacity-60 block">Nomor Seri</span>
-                      <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">
-                        {result.diploma.serialNumber}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 

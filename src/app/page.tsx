@@ -222,11 +222,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Grid: Form (Left) & QR Code Live Preview (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Form Section (7 cols) in Card / Card2 */}
-        <div ref={formRef} className="lg:col-span-7 card">
-          <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
+      {/* Unified Digital Diploma Workstation */}
+      <div className="glass-panel rounded-2xl border overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-black/10 dark:divide-white/10">
+          {/* Left Console: Parameter Form */}
+          <div ref={formRef} className="lg:col-span-7 p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
@@ -377,15 +377,13 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
-        </div>
 
-        {/* Live Preview Section (5 cols) in Card / Card2 */}
-        <div ref={previewRef} className="lg:col-span-5 card">
-          <div className="card2 glass-panel p-6 sm:p-8 space-y-6">
+          {/* Right Console: Live Specimen & QR Engine */}
+          <div ref={previewRef} className="lg:col-span-5 p-6 sm:p-8 space-y-6 bg-black/[0.015] dark:bg-white/[0.015]">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <QrCode className="w-5 h-5 text-emerald-500" />
-                <h3 className="font-bold text-base">Live Preview QR & Hash</h3>
+                <h3 className="font-bold text-base">Pratinjau Kriptografis</h3>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono font-semibold">
                 512px High-Res
