@@ -20,20 +20,20 @@ function initializeStoreWithSeedData() {
 
   const seeds = [
     {
-      serialNumber: "IJZ-2026-CS-001",
+      serialNumber: "DPL-2026-CS-001",
       studentId: "123200045",
-      studentName: "Budi Santoso",
+      studentName: "Alexander Wright",
       issueDate: "2026-08-15",
-      major: "Teknik Informatika",
-      university: "Universitas Sains & Teknologi Indonesia",
+      major: "Computer Science",
+      university: "Pacific Institute of Technology",
     },
     {
-      serialNumber: "IJZ-2026-IS-002",
+      serialNumber: "DPL-2026-IS-002",
       studentId: "123200088",
-      studentName: "Siti Rahmawati",
+      studentName: "Sarah Jenkins",
       issueDate: "2026-08-15",
-      major: "Sistem Informasi",
-      university: "Universitas Sains & Teknologi Indonesia",
+      major: "Information Systems",
+      university: "Metropolitan University",
     },
   ];
 

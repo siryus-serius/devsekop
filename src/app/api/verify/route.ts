@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         status: "invalid",
-        message: "Parameter 'serial' wajib disertakan.",
+        message: "The 'serial' query parameter is required.",
       },
       { status: 400 }
     );
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         status: "not_found",
-        message: `Nomor seri ijazah "${serial}" tidak ditemukan dalam repositori resmi.`,
+        message: `Diploma serial number "${serial}" was not found in the official registry.`,
         serialNumber: serial,
         inputHash: inputHash ?? undefined,
       },
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       status: "valid",
-      message: "Data ijazah ditemukan. Namun sidik jari hash tidak disertakan untuk verifikasi silang.",
+      message: "Diploma record located. However, no hash fingerprint was provided for cryptographic cross-verification.",
       serialNumber: record.serialNumber,
       storedHash: canonicalHash,
       isIntegrityIntact: true,
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         status: "invalid",
-        message: "DATA TIDAK COCOK / TELAH DIMODIFIKASI. Sidik jari hash tidak sesuai dengan catatan resmi.",
+        message: "HASH MISMATCH / TAMPERING DETECTED. The provided SHA-256 fingerprint does not match the official registry record.",
         serialNumber: record.serialNumber,
         inputHash,
         storedHash: canonicalHash,
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     success: true,
     status: "valid",
-    message: "IJAZAH ASLI & TERVERIFIKASI. Integritas data terjamin dan identik dengan data penerbit.",
+    message: "CREDENTIAL AUTHENTIC & VERIFIED. Document integrity is 100% bit-by-bit identical with the official issuer record.",
     serialNumber: record.serialNumber,
     inputHash,
     storedHash: canonicalHash,

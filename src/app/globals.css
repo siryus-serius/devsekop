@@ -1,10 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
-/* ─── Hallmark Invariants ─── */
+/* ─── Hallmark Invariants & Palette Tokens ─── */
 :root {
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-instrument: 'Instrument Serif', Georgia, serif;
+
+  /* User Specified Identity Palette */
+  --color-ink: #010736;
+  --color-oxford: #0D1C42;
+  --color-slate: #22396F;
+  --color-cream: #FCF1D0;
 }
 
 html, body {
@@ -38,54 +44,56 @@ html.lenis body {
 @layer base {
   :root,
   html.dark {
-    --bg-page: #090d16;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --panel-bg: rgba(15, 23, 42, 0.78);
-    --panel-border: rgba(255, 255, 255, 0.08);
-    --card-bg: rgba(30, 41, 59, 0.55);
-    --card-border: rgba(255, 255, 255, 0.06);
-    --input-bg: rgba(15, 23, 42, 0.95);
-    --input-border: #334155;
-    --header-bg: rgba(15, 23, 42, 0.85);
-    --table-hover: rgba(30, 41, 59, 0.4);
-    --table-divide: rgba(51, 65, 85, 0.6);
-    --code-bg: #030712;
-    --code-border: #1e293b;
-    --hero-bg: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7), rgba(30, 58, 138, 0.35));
-    --badge-neutral-bg: rgba(30, 41, 59, 0.8);
-    --badge-neutral-border: #334155;
-    --badge-neutral-text: #cbd5e1;
-    --ambient-1: rgba(37, 99, 235, 0.12);
-    --ambient-2: rgba(99, 102, 241, 0.08);
-    --ambient-3: rgba(16, 185, 129, 0.08);
+    --bg-page: #010736;
+    --text-primary: #FCF1D0;
+    --text-secondary: rgba(252, 241, 208, 0.78);
+    --text-muted: rgba(252, 241, 208, 0.52);
+    --panel-bg: rgba(13, 28, 66, 0.85);
+    --panel-border: rgba(34, 57, 111, 0.55);
+    --card-bg: rgba(13, 28, 66, 0.65);
+    --card-border: rgba(34, 57, 111, 0.4);
+    --input-bg: rgba(8, 19, 48, 0.95);
+    --input-border: #22396F;
+    --input-text: #FCF1D0;
+    --header-bg: rgba(1, 7, 54, 0.9);
+    --table-hover: rgba(34, 57, 111, 0.28);
+    --table-divide: rgba(34, 57, 111, 0.45);
+    --code-bg: #01041c;
+    --code-border: rgba(34, 57, 111, 0.6);
+    --hero-bg: linear-gradient(135deg, rgba(13, 28, 66, 0.95) 0%, rgba(1, 7, 54, 0.9) 60%, rgba(34, 57, 111, 0.35) 100%);
+    --badge-neutral-bg: rgba(34, 57, 111, 0.38);
+    --badge-neutral-border: rgba(34, 57, 111, 0.6);
+    --badge-neutral-text: #FCF1D0;
+    --ambient-1: rgba(34, 57, 111, 0.5);
+    --ambient-2: rgba(13, 28, 66, 0.65);
+    --ambient-3: rgba(252, 241, 208, 0.06);
   }
 
-  /* Eye-friendly Warm Beige Light Theme */
+  /* Eye-friendly Warm Parchment Light Theme */
   html.light {
-    --bg-page: #f5f2eb;
-    --text-primary: #292524;
-    --text-secondary: #57534e;
-    --text-muted: #78716c;
-    --panel-bg: rgba(255, 255, 255, 0.92);
-    --panel-border: #ded7ca;
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --card-border: #ded7ca;
-    --input-bg: #fcfbf9;
-    --input-border: #cbc1af;
-    --header-bg: rgba(245, 242, 235, 0.92);
-    --table-hover: rgba(230, 224, 212, 0.5);
-    --table-divide: #dfd7c8;
-    --code-bg: #ebe5d8;
-    --code-border: #d4caa8;
-    --hero-bg: linear-gradient(to right, #ffffff, #fdfbf7, #f3ece0);
-    --badge-neutral-bg: #e6dfd1;
-    --badge-neutral-border: #cfc5b3;
-    --badge-neutral-text: #44403c;
-    --ambient-1: rgba(217, 119, 6, 0.07);
-    --ambient-2: rgba(59, 130, 246, 0.05);
-    --ambient-3: rgba(16, 185, 129, 0.05);
+    --bg-page: #FCF1D0;
+    --text-primary: #010736;
+    --text-secondary: #0D1C42;
+    --text-muted: rgba(13, 28, 66, 0.65);
+    --panel-bg: rgba(255, 255, 255, 0.88);
+    --panel-border: rgba(34, 57, 111, 0.2);
+    --card-bg: rgba(255, 255, 255, 0.78);
+    --card-border: rgba(34, 57, 111, 0.16);
+    --input-bg: #ffffff;
+    --input-border: rgba(34, 57, 111, 0.3);
+    --input-text: #010736;
+    --header-bg: rgba(252, 241, 208, 0.92);
+    --table-hover: rgba(34, 57, 111, 0.08);
+    --table-divide: rgba(34, 57, 111, 0.18);
+    --code-bg: rgba(13, 28, 66, 0.06);
+    --code-border: rgba(34, 57, 111, 0.22);
+    --hero-bg: linear-gradient(135deg, #ffffff 0%, #fdfbf5 50%, rgba(252, 241, 208, 0.85) 100%);
+    --badge-neutral-bg: rgba(34, 57, 111, 0.09);
+    --badge-neutral-border: rgba(34, 57, 111, 0.22);
+    --badge-neutral-text: #010736;
+    --ambient-1: rgba(34, 57, 111, 0.1);
+    --ambient-2: rgba(13, 28, 66, 0.06);
+    --ambient-3: rgba(252, 241, 208, 0.4);
   }
 
   body {
@@ -95,6 +103,21 @@ html.lenis body {
     font-weight: 500;
     min-height: 100vh;
     transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+  }
+
+  html.dark body {
+    background-image: 
+      radial-gradient(ellipse 90% 55% at 50% -10%, rgba(34, 57, 111, 0.4) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 45% at 100% 65%, rgba(13, 28, 66, 0.6) 0%, transparent 60%),
+      radial-gradient(circle at 10% 85%, rgba(252, 241, 208, 0.035) 0%, transparent 50%);
+  }
+
+  html.light body {
+    background-image: 
+      radial-gradient(ellipse 90% 60% at 50% -15%, rgba(255, 255, 255, 0.95) 0%, rgba(252, 241, 208, 0.7) 65%, transparent 100%),
+      radial-gradient(ellipse 55% 45% at 95% 30%, rgba(34, 57, 111, 0.07) 0%, transparent 50%),
+      radial-gradient(circle at 5% 85%, rgba(13, 28, 66, 0.05) 0%, transparent 45%);
   }
 }
 
@@ -166,40 +189,72 @@ h1, h2, h3, .font-serif, .display-head {
   box-shadow: 0 0 45px -10px rgba(244, 63, 94, 0.22);
 }
 
+/* ─── Architectural Vault Background Texture & Variation ─── */
+.bg-vault-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(34, 57, 111, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 57, 111, 0.18) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 25%, #000 35%, transparent 92%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 25%, #000 35%, transparent 92%);
+}
+
+html.light .bg-vault-grid {
+  background-image: 
+    linear-gradient(to right, rgba(34, 57, 111, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 57, 111, 0.09) 1px, transparent 1px);
+}
+
+.bg-vault-watermark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2322396F' fill-rule='evenodd'%3E%3Cpath d='M40 0l40 40-40 40L0 40 40 0zm0 10L10 40l30 30 30-30-30-30zm0 10l20 20-20 20-20-20 20-20z' fill-opacity='0.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+
+html.dark .bg-vault-watermark {
+  opacity: 0.07;
+}
+
 /* ─────────────────────────────────────────────────────────
    From Uiverse.io by reglobby - Focused Glow Input
+   Integrated with Palette: #010736, #0D1C42, #22396F, #FCF1D0
    ───────────────────────────────────────────────────────── */
 .input {
-  border: 2px solid transparent;
+  border: 1px solid var(--input-border);
   width: 100%;
   height: 2.75em;
   padding: 0 1rem;
-  padding-left: 0.8em;
+  padding-left: 0.85em;
   outline: none;
   overflow: hidden;
-  background-color: #F3F3F3;
-  color: #171717;
+  background-color: var(--input-bg);
+  color: var(--input-text);
   border-radius: 10px;
   font-family: var(--font-inter);
   font-weight: 500;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 }
 
 .input::placeholder {
-  color: #8c8c8c;
+  color: var(--text-muted);
 }
 
 .input:hover,
 .input:focus {
-  border: 2px solid #4A9DEC;
-  box-shadow: 0px 0px 0px 7px rgba(74, 157, 236, 0.2);
-  background-color: #ffffff;
-  color: #000000;
+  border: 1.5px solid var(--color-slate);
+  box-shadow: 0px 0px 0px 5px rgba(34, 57, 111, 0.28);
+  background-color: var(--panel-bg);
+  color: var(--text-primary);
 }
 
 /* ─────────────────────────────────────────────────────────
    Refined Elevated Focus Cards & Form (.card, .card2, .form)
-   Antislop Design System (Emerald & Sapphire Brand Palette)
    ───────────────────────────────────────────────────────── */
 .form {
   display: flex;
@@ -214,23 +269,23 @@ h1, h2, h3, .font-serif, .display-head {
 }
 
 .card {
-  background-image: linear-gradient(163deg, rgba(16, 185, 129, 0.4) 0%, rgba(37, 99, 235, 0.4) 100%);
+  background-image: linear-gradient(163deg, rgba(34, 57, 111, 0.5) 0%, rgba(13, 28, 66, 0.7) 100%);
   border-radius: 24px;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
   padding: 2px;
 }
 
 html.light .card {
-  background-image: linear-gradient(163deg, rgba(16, 185, 129, 0.35) 0%, rgba(37, 99, 235, 0.35) 100%);
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+  background-image: linear-gradient(163deg, rgba(34, 57, 111, 0.25) 0%, rgba(252, 241, 208, 0.7) 100%);
+  box-shadow: 0 4px 16px -2px rgba(1, 7, 54, 0.06);
 }
 
 .card:hover {
-  box-shadow: 0px 4px 24px 0px rgba(16, 185, 129, 0.18);
+  box-shadow: 0px 4px 24px 0px rgba(34, 57, 111, 0.3);
 }
 
 html.light .card:hover {
-  box-shadow: 0px 6px 20px 0px rgba(37, 99, 235, 0.12);
+  box-shadow: 0px 6px 20px 0px rgba(1, 7, 54, 0.1);
 }
 
 :where(.card2) {
@@ -257,14 +312,14 @@ html.light .card:hover {
 button:not(.bb8-toggle__checkbox),
 .btn {
   font-weight: 700;
-  color: white;
+  color: var(--color-cream, #FCF1D0);
   border-radius: 2rem;
   cursor: pointer;
   min-width: 95.02px;
   height: 42.66px;
   padding: 0 1.25rem;
   border: none;
-  background-color: #3653f8;
+  background-color: var(--color-slate, #22396F);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -427,35 +482,45 @@ button .span-mother2 span:nth-child(n+13),
 
 /* Color Variants */
 .btn-primary {
-  background-color: #3653f8;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(54, 83, 248, 0.35);
+  background-color: var(--color-slate, #22396F);
+  color: var(--color-cream, #FCF1D0);
+  box-shadow: 0 4px 14px rgba(34, 57, 111, 0.4);
 }
 .btn-primary:hover {
-  background-color: #2744e8;
-  box-shadow: 0 8px 22px rgba(54, 83, 248, 0.45);
+  background-color: #2b4788;
+  box-shadow: 0 8px 22px rgba(34, 57, 111, 0.55);
+}
+
+html.light .btn-primary {
+  background-color: var(--color-ink, #010736);
+  color: var(--color-cream, #FCF1D0);
+  box-shadow: 0 4px 14px rgba(1, 7, 54, 0.28);
+}
+html.light .btn-primary:hover {
+  background-color: var(--color-oxford, #0D1C42);
+  box-shadow: 0 8px 22px rgba(1, 7, 54, 0.38);
 }
 
 .btn-secondary {
-  background-color: #1e293b;
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  background-color: var(--color-oxford, #0D1C42);
+  color: var(--color-cream, #FCF1D0);
+  border: 1px solid rgba(34, 57, 111, 0.7);
+  box-shadow: 0 3px 10px rgba(1, 7, 54, 0.3);
 }
 .btn-secondary:hover {
-  background-color: #2a3a52;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  background-color: #162b5d;
+  box-shadow: 0 6px 16px rgba(1, 7, 54, 0.45);
 }
 
 html.light .btn-secondary {
-  background-color: #ece5d8;
-  color: #292524;
-  border: 1px solid #d4caa8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: rgba(34, 57, 111, 0.08);
+  color: var(--color-ink, #010736);
+  border: 1px solid rgba(34, 57, 111, 0.25);
+  box-shadow: 0 2px 8px rgba(1, 7, 54, 0.05);
 }
 html.light .btn-secondary:hover {
-  background-color: #e2dac9;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: rgba(34, 57, 111, 0.15);
+  box-shadow: 0 4px 12px rgba(1, 7, 54, 0.1);
 }
 
 .btn-emerald {
@@ -469,13 +534,13 @@ html.light .btn-secondary:hover {
 }
 
 .btn-rose {
-  background-color: #e11d48;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+  background-color: #9f1239;
+  color: var(--color-cream, #FCF1D0);
+  box-shadow: 0 4px 14px rgba(159, 18, 57, 0.35);
 }
 .btn-rose:hover {
   background-color: #be123c;
-  box-shadow: 0 8px 22px rgba(225, 29, 72, 0.45);
+  box-shadow: 0 8px 22px rgba(159, 18, 57, 0.45);
 }
 
 /* Disabled state */
@@ -511,7 +576,7 @@ button:disabled,
   --toggle-width: 10.625em;
   --toggle-height: 5.625em;
   --toggle-offset: calc((var(--toggle-height) - var(--bb8-diameter)) / 2);
-  --toggle-bg: linear-gradient(#2c4770, #070e2b 35%, #628cac 50% 70%, #a6c5d4)
+  --toggle-bg: linear-gradient(#22396F, #010736 35%, #0D1C42 50% 70%, #FCF1D0)
     no-repeat;
   --bb8-diameter: 4.375em;
   --radius: 99em;

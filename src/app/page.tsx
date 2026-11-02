@@ -20,7 +20,7 @@ import {
   Calendar,
   Building,
 } from "lucide-react";
-import { useFadeInUp, useStaggerFadeIn } from "@/lib/animations";
+import { useFadeInUp } from "@/lib/animations";
 
 interface DiplomaData {
   serialNumber: string;
@@ -43,12 +43,12 @@ interface StoredDiploma extends DiplomaData {
 export default function DashboardPage() {
   // Form State
   const [formData, setFormData] = useState<DiplomaData>({
-    serialNumber: "IJZ-2026-CS-001",
+    serialNumber: "DPL-2026-CS-001",
     studentId: "123200045",
-    studentName: "Budi Santoso",
+    studentName: "Alexander Wright",
     issueDate: "2026-08-15",
-    major: "Teknik Informatika",
-    university: "Universitas Sains & Teknologi Indonesia",
+    major: "Computer Science",
+    university: "Pacific Institute of Technology",
   });
 
   // Action / Response State
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
   async function handleGenerateOrRegenerate(isRegenerate: boolean = false) {
     if (!formData.serialNumber || !formData.studentId || !formData.studentName || !formData.issueDate) {
-      setError("Semua bidang bertanda bintang (*) wajib diisi.");
+      setError("All fields marked with an asterisk (*) are required.");
       return;
     }
 
@@ -113,7 +113,7 @@ export default function DashboardPage() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Gagal menghasilkan QR Code");
+        throw new Error(data.error || "Failed to generate QR Code");
       }
 
       setLastResult({
@@ -126,39 +126,39 @@ export default function DashboardPage() {
       // Refresh stored list
       fetchStoredDiplomas();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan sistem");
+      setError(err instanceof Error ? err.message : "An unexpected system error occurred");
     } finally {
       setLoading(false);
     }
   }
 
-  function handlePreset(preset: "cs" | "is" | "med") {
+  function handlePreset(preset: "cs" | "is" | "eng") {
     if (preset === "cs") {
       setFormData({
-        serialNumber: "IJZ-2026-CS-001",
+        serialNumber: "DPL-2026-CS-001",
         studentId: "123200045",
-        studentName: "Budi Santoso",
+        studentName: "Alexander Wright",
         issueDate: "2026-08-15",
-        major: "Teknik Informatika",
-        university: "Universitas Sains & Teknologi Indonesia",
+        major: "Computer Science",
+        university: "Pacific Institute of Technology",
       });
     } else if (preset === "is") {
       setFormData({
-        serialNumber: "IJZ-2026-IS-002",
+        serialNumber: "DPL-2026-IS-002",
         studentId: "123200088",
-        studentName: "Siti Rahmawati",
+        studentName: "Sarah Jenkins",
         issueDate: "2026-08-15",
-        major: "Sistem Informasi",
-        university: "Universitas Sains & Teknologi Indonesia",
+        major: "Information Systems",
+        university: "Metropolitan University",
       });
     } else {
       setFormData({
-        serialNumber: `IJZ-2026-ENG-${Math.floor(100 + Math.random() * 900)}`,
+        serialNumber: `DPL-2026-ENG-${Math.floor(100 + Math.random() * 900)}`,
         studentId: `240${Math.floor(100000 + Math.random() * 900000)}`,
-        studentName: "Ahmad Dahlan",
+        studentName: "Marcus Vance",
         issueDate: "2026-09-01",
-        major: "Teknik Komputer & Jaringan",
-        university: "Institut Teknologi & Bisnis Digital",
+        major: "Computer Engineering",
+        university: "Federal Polytechnic Institute",
       });
     }
   }
@@ -189,24 +189,24 @@ export default function DashboardPage() {
       {/* Simple Page Header */}
       <div ref={heroRef} className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-1">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-serif">
-            Digital Diploma Vault & QR Engine
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-serif text-[var(--text-primary)]">
+            Digital Diploma Vault &amp; QR Engine
           </h1>
-          <p className="text-xs sm:text-sm opacity-70 mt-1 max-w-xl leading-relaxed">
-            Kalkulasi sidik jari SHA-256 deterministik dari data ijazah dan produksi QR Code validasi instan.
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1 max-w-xl leading-relaxed">
+            Deterministic SHA-256 fingerprint computation from official academic records with instant verification QR code generation.
           </p>
         </div>
 
         {/* Quick Presets */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="opacity-60 text-xs mr-1">Contoh Cepat:</span>
+          <span className="opacity-60 text-xs mr-1 text-[var(--text-secondary)]">Quick Presets:</span>
           <RollButton
             type="button"
             size="sm"
             variant="secondary"
             onClick={() => handlePreset("cs")}
           >
-            Informatika
+            Computer Science
           </RollButton>
           <RollButton
             type="button"
@@ -214,15 +214,15 @@ export default function DashboardPage() {
             variant="secondary"
             onClick={() => handlePreset("is")}
           >
-            Sist. Informasi
+            Information Systems
           </RollButton>
           <RollButton
             type="button"
             size="sm"
             variant="secondary"
-            onClick={() => handlePreset("med")}
+            onClick={() => handlePreset("eng")}
           >
-            Kedokteran
+            Engineering
           </RollButton>
         </div>
       </div>
@@ -234,16 +234,16 @@ export default function DashboardPage() {
           <div ref={formRef} className="lg:col-span-7 p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                <div className="p-2.5 rounded-xl bg-[#22396F]/20 text-[#22396F] dark:text-[#FCF1D0] border border-[#22396F]/30">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold">Metadata Ijazah</h2>
-                  <p className="text-xs opacity-70">Parameter untuk perhitungan SHA-256 deterministik</p>
+                  <h2 className="text-lg font-bold text-[var(--text-primary)]">Credential Metadata</h2>
+                  <p className="text-xs text-[var(--text-muted)]">Input parameters for canonical SHA-256 computation</p>
                 </div>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full font-mono theme-badge">
-                Form Penerbit
+                Issuer Console
               </span>
             </div>
 
@@ -257,31 +257,31 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Serial Number */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-blue-500" />
-                  Nomor Seri Ijazah <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
+                  <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  Diploma Serial Number <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.serialNumber}
                   onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
-                  placeholder="mis. IJZ-2026-CS-001"
+                  placeholder="e.g. DPL-2026-CS-001"
                   className="input font-mono text-sm"
                   required
                 />
               </div>
 
-              {/* Student ID / NIM */}
+              {/* Student ID */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-indigo-500" />
-                  NIM / Student ID <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
+                  <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  Student ID / Matriculation No. <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.studentId}
                   onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
-                  placeholder="mis. 123200045"
+                  placeholder="e.g. 123200045"
                   className="input font-mono text-sm"
                   required
                 />
@@ -289,15 +289,15 @@ export default function DashboardPage() {
 
               {/* Student Name */}
               <div className="sm:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-blue-500" />
-                  Nama Lengkap Mahasiswa <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
+                  <User className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  Full Legal Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.studentName}
                   onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
-                  placeholder="mis. Budi Santoso"
+                  placeholder="e.g. Alexander Wright"
                   className="input text-sm"
                   required
                 />
@@ -305,9 +305,9 @@ export default function DashboardPage() {
 
               {/* Issue Date */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
                   <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                  Tanggal Penerbitan <span className="text-rose-500">*</span>
+                  Conferral Date <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -320,30 +320,30 @@ export default function DashboardPage() {
 
               {/* Major */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
                   <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
-                  Program Studi
+                  Degree / Major Program
                 </label>
                 <input
                   type="text"
                   value={formData.major || ""}
                   onChange={(e) => setFormData({ ...formData, major: e.target.value })}
-                  placeholder="mis. Teknik Informatika"
+                  placeholder="e.g. Computer Science"
                   className="input text-sm"
                 />
               </div>
 
               {/* University */}
               <div className="sm:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5 text-purple-500" />
-                  Institusi Penerbit
+                <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
+                  <Building className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  Awarding Institution
                 </label>
                 <input
                   type="text"
                   value={formData.university || ""}
                   onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-                  placeholder="mis. Universitas Sains & Teknologi Indonesia"
+                  placeholder="e.g. Pacific Institute of Technology"
                   className="input text-sm"
                 />
               </div>
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                 type="button"
                 disabled={loading}
                 loading={loading}
-                loadingText="Memproses SHA-256..."
+                loadingText="Computing SHA-256..."
                 icon={!loading ? <QrCode className="w-4 h-4" /> : undefined}
                 onClick={() => handleGenerateOrRegenerate(false)}
                 className="flex-1"
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                 disabled={loading}
                 icon={<RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />}
                 onClick={() => handleGenerateOrRegenerate(true)}
-                title="Kalkulasi ulang hash dan perbarui QR Code di memori"
+                title="Recalculate hash and refresh QR Code in memory"
               >
                 Regenerate
               </RollButton>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
                 <QrCode className="w-5 h-5 text-emerald-500" />
-                <h3 className="font-bold text-base">Pratinjau Kriptografis</h3>
+                <h3 className="font-bold text-base text-[var(--text-primary)]">Cryptographic Specimen</h3>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono font-semibold">
                 512px High-Res
@@ -402,7 +402,7 @@ export default function DashboardPage() {
                   />
                   <div className="mt-3 text-center">
                     <span className="text-[11px] font-mono text-slate-600 block">
-                      Target URL: /verify?serial=...&hash=...
+                      Target URL: /verify?serial=...&amp;hash=...
                     </span>
                   </div>
                 </div>
@@ -410,8 +410,8 @@ export default function DashboardPage() {
                 {/* Computed Hash Display */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5">
-                      <Hash className="w-3.5 h-3.5 text-blue-500" />
+                    <span className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
+                      <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
                       Computed SHA-256 Hash
                     </span>
                     <RollButton
@@ -420,7 +420,7 @@ export default function DashboardPage() {
                       onClick={() => copyText(lastResult.hash, "hash")}
                       icon={copiedHash ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                     >
-                      {copiedHash ? "Tersalin!" : "Salin Hash"}
+                      {copiedHash ? "Copied!" : "Copy Hash"}
                     </RollButton>
                   </div>
                   <div className="p-3 theme-code-block rounded-xl font-mono text-[11px] break-all leading-relaxed">
@@ -438,7 +438,7 @@ export default function DashboardPage() {
                       icon={<Download className="w-3.5 h-3.5" />}
                       className="w-full"
                     >
-                      Unduh PNG
+                      Download PNG
                     </RollButton>
 
                     <RollButton
@@ -448,7 +448,7 @@ export default function DashboardPage() {
                       icon={copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                       className="w-full"
                     >
-                      {copiedLink ? "Tersalin!" : "Salin Link URL"}
+                      {copiedLink ? "Copied!" : "Copy Link URL"}
                     </RollButton>
                   </div>
 
@@ -460,7 +460,7 @@ export default function DashboardPage() {
                     iconAfter={<ExternalLink className="w-3.5 h-3.5 ml-auto opacity-75" />}
                     className="w-full"
                   >
-                    Uji Halaman Verifikasi (Valid)
+                    Open Verification (Valid)
                   </RollLink>
 
                   {/* Tampered Simulation Link (demonstrating Red Badge!) */}
@@ -468,21 +468,21 @@ export default function DashboardPage() {
                     href={`/verify?serial=${encodeURIComponent(lastResult.serialNumber)}&hash=${lastResult.hash.slice(0, -4)}dead`}
                     variant="rose"
                     className="w-full"
-                    title="Simulasikan pemalsuan data dengan mengubah 4 digit terakhir hash"
+                    title="Simulate record tampering by altering the final 4 hash characters"
                   >
-                    Simulasi Pemalsuan (Cek Red Badge)
+                    Simulate Tampering (Test Red Badge)
                   </RollLink>
                 </div>
               </div>
             ) : (
               <div className="py-16 text-center opacity-70 space-y-3">
                 <div className="w-16 h-16 mx-auto rounded-2xl theme-badge flex items-center justify-center">
-                  <QrCode className="w-8 h-8 opacity-60" />
+                  <QrCode className="w-8 h-8 opacity-60 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">Belum Ada QR Code Dihasilkan</p>
-                  <p className="text-xs opacity-70 mt-1 max-w-xs mx-auto">
-                    Klik tombol <strong>Generate QR Code</strong> di formulir sebelah kiri untuk melihat pratinjau langsung.
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">No QR Code Generated Yet</p>
+                  <p className="text-xs opacity-70 mt-1 max-w-xs mx-auto text-[var(--text-secondary)]">
+                    Click <strong>Generate QR Code</strong> in the left console to compute a cryptographic specimen.
                   </p>
                 </div>
               </div>
@@ -494,98 +494,98 @@ export default function DashboardPage() {
       {/* Database Store List (Mock Store Explorer) */}
       <div ref={tableRef} className="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-purple-600/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                <Database className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold">Repositori Ijazah Tersimpan (In-Memory Store)</h2>
-                <p className="text-xs opacity-70">
-                  Data aktif yang dapat diverifikasi melalui API <code className="text-blue-500 font-mono">/api/verify</code>
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-[#22396F]/20 text-[#22396F] dark:text-[#FCF1D0] border border-[#22396F]/30">
+              <Database className="w-5 h-5" />
             </div>
-
-            <RollButton
-              onClick={fetchStoredDiplomas}
-              disabled={loadingList}
-              size="sm"
-              variant="secondary"
-              icon={<RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />}
-            >
-              Muat Ulang Data
-            </RollButton>
+            <div>
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">Stored Credential Registry (In-Memory Store)</h2>
+              <p className="text-xs text-[var(--text-muted)]">
+                Active credential records verifiable via the <code className="text-[#22396F] dark:text-[#FCF1D0] font-mono font-semibold">/api/verify</code> endpoint
+              </p>
+            </div>
           </div>
 
-          {/* Table of stored diplomas */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs theme-table">
-              <thead>
-                <tr className="border-b border-black/10 dark:border-white/10 opacity-70 font-semibold uppercase tracking-wider">
-                  <th className="py-3 px-3">Nomor Seri</th>
-                  <th className="py-3 px-3">Nama Mahasiswa</th>
-                  <th className="py-3 px-3">NIM</th>
-                  <th className="py-3 px-3">Tanggal Terbit</th>
-                  <th className="py-3 px-3">SHA-256 Hash</th>
-                  <th className="py-3 px-3 text-right">Aksi Verifikasi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y theme-table-divide font-mono">
-                {storedList.length > 0 ? (
-                  storedList.map((item) => (
-                    <tr key={item.serialNumber} className="transition font-sans">
-                      <td className="py-3.5 px-3 font-mono font-bold text-blue-600 dark:text-blue-400">
-                        {item.serialNumber}
-                      </td>
-                      <td className="py-3.5 px-3 font-semibold">{item.studentName}</td>
-                      <td className="py-3.5 px-3 font-mono opacity-80">{item.studentId}</td>
-                      <td className="py-3.5 px-3 opacity-70">{item.issueDate}</td>
-                      <td className="py-3.5 px-3">
-                        <span className="font-mono text-[11px] theme-code-block px-2 py-1 rounded" title={item.hash}>
-                          {item.hash.slice(0, 10)}...{item.hash.slice(-8)}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-3 text-right space-x-2">
-                        <RollButton
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => {
-                            setFormData({
-                              serialNumber: item.serialNumber,
-                              studentId: item.studentId,
-                              studentName: item.studentName,
-                              issueDate: item.issueDate,
-                              major: item.major,
-                              university: item.university,
-                            });
-                            handleGenerateOrRegenerate(true);
-                          }}
-                        >
-                          Buka QR
-                        </RollButton>
+          <RollButton
+            onClick={fetchStoredDiplomas}
+            disabled={loadingList}
+            size="sm"
+            variant="secondary"
+            icon={<RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />}
+          >
+            Reload Registry
+          </RollButton>
+        </div>
 
-                        <RollLink
-                          size="sm"
-                          variant="emerald"
-                          href={`/verify?serial=${encodeURIComponent(item.serialNumber)}&hash=${item.hash}`}
-                          icon={<ShieldCheck className="w-3.5 h-3.5" />}
-                        >
-                          Verifikasi
-                        </RollLink>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center opacity-60 font-sans">
-                      Tidak ada rekaman ijazah.
+        {/* Table of stored diplomas */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs theme-table">
+            <thead>
+              <tr className="border-b border-black/10 dark:border-white/10 opacity-70 font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                <th className="py-3 px-3">Serial No.</th>
+                <th className="py-3 px-3">Student Name</th>
+                <th className="py-3 px-3">Student ID</th>
+                <th className="py-3 px-3">Conferral Date</th>
+                <th className="py-3 px-3">SHA-256 Hash</th>
+                <th className="py-3 px-3 text-right">Verification Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y theme-table-divide font-mono">
+              {storedList.length > 0 ? (
+                storedList.map((item) => (
+                  <tr key={item.serialNumber} className="transition font-sans">
+                    <td className="py-3.5 px-3 font-mono font-bold text-[#22396F] dark:text-[#FCF1D0]">
+                      {item.serialNumber}
+                    </td>
+                    <td className="py-3.5 px-3 font-semibold text-[var(--text-primary)]">{item.studentName}</td>
+                    <td className="py-3.5 px-3 font-mono opacity-80 text-[var(--text-secondary)]">{item.studentId}</td>
+                    <td className="py-3.5 px-3 opacity-70 text-[var(--text-secondary)]">{item.issueDate}</td>
+                    <td className="py-3.5 px-3">
+                      <span className="font-mono text-[11px] theme-code-block px-2 py-1 rounded" title={item.hash}>
+                        {item.hash.slice(0, 10)}...{item.hash.slice(-8)}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-3 text-right space-x-2">
+                      <RollButton
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => {
+                          setFormData({
+                            serialNumber: item.serialNumber,
+                            studentId: item.studentId,
+                            studentName: item.studentName,
+                            issueDate: item.issueDate,
+                            major: item.major,
+                            university: item.university,
+                          });
+                          handleGenerateOrRegenerate(true);
+                        }}
+                      >
+                        Load QR
+                      </RollButton>
+
+                      <RollLink
+                        size="sm"
+                        variant="emerald"
+                        href={`/verify?serial=${encodeURIComponent(item.serialNumber)}&hash=${item.hash}`}
+                        icon={<ShieldCheck className="w-3.5 h-3.5" />}
+                      >
+                        Verify
+                      </RollLink>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center opacity-60 font-sans text-[var(--text-muted)]">
+                    No credential records stored yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
   );
 }

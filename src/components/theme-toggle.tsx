@@ -51,8 +51,8 @@ export function ThemeToggle() {
       className="bb8-toggle"
       title={
         theme === "dark"
-          ? "BB-8: Mode Malam Aktif (Klik untuk Mode Terang)"
-          : "BB-8: Mode Siang Aktif (Klik untuk Mode Gelap)"
+          ? "BB-8: Dark Mode Active (Click for Warm Parchment Light Mode)"
+          : "BB-8: Light Mode Active (Click for Midnight Dark Mode)"
       }
     >
       <input

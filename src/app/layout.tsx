@@ -6,9 +6,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LenisProvider } from "@/components/lenis-provider";
 
 export const metadata: Metadata = {
-  title: "Vault Ijazah Digital | QR & SHA-256 Engine",
+  title: "Digital Diploma Vault | QR & SHA-256 Engine",
   description:
-    "Platform Verifikasi dan Pembuatan QR Code Ijazah Digital Berbasis Deterministic SHA-256 Hashing.",
+    "Cryptographic diploma verification and QR code issuance engine powered by deterministic SHA-256 hashing.",
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
         {/* Google Fonts: Inter (Medium - Bold) & Instrument Serif */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,25 +47,27 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased selection:bg-blue-600 selection:text-white flex flex-col min-h-screen">
+      <body className="antialiased selection:bg-[#22396F] selection:text-[#FCF1D0] flex flex-col min-h-screen">
         <LenisProvider>
-          {/* Subtle Ambient Background Lighting */}
+          {/* Subtle Ambient Background Lighting & Security Texture Variations */}
           <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-            <div className="absolute -top-40 -left-40 w-96 h-96 ambient-glow-1 rounded-full blur-3xl transition-colors duration-500"></div>
-            <div className="absolute top-1/3 -right-40 w-96 h-96 ambient-glow-2 rounded-full blur-3xl transition-colors duration-500"></div>
-            <div className="absolute -bottom-40 left-1/3 w-96 h-96 ambient-glow-3 rounded-full blur-3xl transition-colors duration-500"></div>
+            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[360px] ambient-glow-1 rounded-full blur-3xl opacity-75 transition-colors duration-700"></div>
+            <div className="absolute top-1/3 -right-32 w-80 h-80 ambient-glow-2 rounded-full blur-3xl opacity-60 transition-colors duration-700"></div>
+            <div className="absolute -bottom-32 -left-20 w-80 h-80 ambient-glow-3 rounded-full blur-3xl opacity-50 transition-colors duration-700"></div>
+            <div className="bg-vault-grid"></div>
+            <div className="bg-vault-watermark"></div>
           </div>
 
           {/* Global Navigation Header */}
           <header className="sticky top-0 z-50 glass-panel border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                  <Shield className="w-5 h-5" />
+                <div className="p-2 rounded-xl bg-gradient-to-tr from-[#22396F] to-[#0D1C42] border border-[#22396F]/40 text-[#FCF1D0] shadow-md shadow-[#010736]/30 group-hover:scale-105 transition-transform">
+                  <Shield className="w-5 h-5 text-[#FCF1D0]" />
                 </div>
                 <div>
-                  <span className="font-bold tracking-tight font-serif text-xl sm:text-2xl">
-                    Vault Ijazah Digital
+                  <span className="font-bold tracking-tight font-serif text-xl sm:text-2xl text-[var(--text-primary)]">
+                    Digital Diploma Vault
                   </span>
                 </div>
               </Link>
@@ -75,7 +77,7 @@ export default function RootLayout({
                   href="/"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
                 >
-                  <QrCode className="w-4 h-4 text-blue-500" />
+                  <QrCode className="w-4 h-4 text-[#22396F] dark:text-[#FCF1D0]/80" />
                   <span className="hidden sm:inline">Dashboard & QR</span>
                 </Link>
 
@@ -84,7 +86,7 @@ export default function RootLayout({
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
                 >
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span className="hidden sm:inline">Verifikasi Publik</span>
+                  <span className="hidden sm:inline">Public Verification</span>
                 </Link>
 
                 {/* Theme Toggle Button */}
