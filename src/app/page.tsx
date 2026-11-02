@@ -184,41 +184,42 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-10">
-      {/* Hero Banner */}
-      <div ref={heroRef} className="theme-hero rounded-2xl p-8 sm:p-10 shadow-sm relative overflow-hidden border border-black/10 dark:border-white/10">
-        <div className="max-w-3xl space-y-4">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-serif">
-            Digital Diploma Vault & QR Code Engine
+    <div className="space-y-6 sm:space-y-8">
+      {/* Simple Page Header */}
+      <div ref={heroRef} className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-1">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-serif">
+            Digital Diploma Vault & QR Engine
           </h1>
-          <p className="opacity-80 text-sm sm:text-base leading-relaxed">
-            Menghasilkan sidik jari kriptografis <strong>SHA-256 deterministik</strong> dari data ijazah resmi, memproduksi QR Code dinamis beresolusi tinggi, dan menyediakan portal verifikasi integritas publik secara instan.
+          <p className="text-xs sm:text-sm opacity-70 mt-1 max-w-xl leading-relaxed">
+            Kalkulasi sidik jari SHA-256 deterministik dari data ijazah dan produksi QR Code validasi instan.
           </p>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 pt-2">
-            <span className="text-xs opacity-70 font-medium">Contoh Data Cepat:</span>
-            <button
-              type="button"
-              onClick={() => handlePreset("cs")}
-              className="btn btn-sm btn-secondary"
-            >
-              Informatika (Budi)
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePreset("is")}
-              className="btn btn-sm btn-secondary"
-            >
-              Sist. Informasi (Siti)
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePreset("med")}
-              className="btn btn-sm btn-secondary"
-            >
-              Kedokteran (Rian)
-            </button>
-          </div>
+        {/* Quick Presets */}
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="opacity-60 text-xs mr-1">Contoh Cepat:</span>
+          <button
+            type="button"
+            onClick={() => handlePreset("cs")}
+            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
+          >
+            Informatika
+          </button>
+          <button
+            type="button"
+            onClick={() => handlePreset("is")}
+            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
+          >
+            Sist. Informasi
+          </button>
+          <button
+            type="button"
+            onClick={() => handlePreset("med")}
+            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
+          >
+            Kedokteran
+          </button>
         </div>
       </div>
 
