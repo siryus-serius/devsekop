@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { RollButton, RollLink } from "@/components/roll-button";
 import {
   QrCode,
   ShieldCheck,
@@ -199,27 +200,30 @@ export default function DashboardPage() {
         {/* Quick Presets */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <span className="opacity-60 text-xs mr-1">Contoh Cepat:</span>
-          <button
+          <RollButton
             type="button"
+            size="sm"
+            variant="secondary"
             onClick={() => handlePreset("cs")}
-            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
           >
             Informatika
-          </button>
-          <button
+          </RollButton>
+          <RollButton
             type="button"
+            size="sm"
+            variant="secondary"
             onClick={() => handlePreset("is")}
-            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
           >
             Sist. Informasi
-          </button>
-          <button
+          </RollButton>
+          <RollButton
             type="button"
+            size="sm"
+            variant="secondary"
             onClick={() => handlePreset("med")}
-            className="px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-medium"
           >
             Kedokteran
-          </button>
+          </RollButton>
         </div>
       </div>
 
@@ -347,35 +351,28 @@ export default function DashboardPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-black/10 dark:border-white/10">
-              <button
+              <RollButton
                 type="button"
                 disabled={loading}
+                loading={loading}
+                loadingText="Memproses SHA-256..."
+                icon={!loading ? <QrCode className="w-4 h-4" /> : undefined}
                 onClick={() => handleGenerateOrRegenerate(false)}
-                className="btn btn-primary flex-1"
+                className="flex-1"
               >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Memproses SHA-256...</span>
-                  </>
-                ) : (
-                  <>
-                    <QrCode className="w-4 h-4" />
-                    <span>Generate QR Code</span>
-                  </>
-                )}
-              </button>
+                Generate QR Code
+              </RollButton>
 
-              <button
+              <RollButton
                 type="button"
+                variant="secondary"
                 disabled={loading}
+                icon={<RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />}
                 onClick={() => handleGenerateOrRegenerate(true)}
-                className="btn btn-secondary"
                 title="Kalkulasi ulang hash dan perbarui QR Code di memori"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>Regenerate</span>
-              </button>
+                Regenerate
+              </RollButton>
             </div>
           </div>
 
@@ -417,13 +414,14 @@ export default function DashboardPage() {
                       <Hash className="w-3.5 h-3.5 text-blue-500" />
                       Computed SHA-256 Hash
                     </span>
-                    <button
+                    <RollButton
+                      size="sm"
+                      variant="secondary"
                       onClick={() => copyText(lastResult.hash, "hash")}
-                      className="btn btn-sm btn-secondary"
+                      icon={copiedHash ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                     >
-                      {copiedHash ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                       {copiedHash ? "Tersalin!" : "Salin Hash"}
-                    </button>
+                    </RollButton>
                   </div>
                   <div className="p-3 theme-code-block rounded-xl font-mono text-[11px] break-all leading-relaxed">
                     {lastResult.hash}
@@ -433,41 +431,47 @@ export default function DashboardPage() {
                 {/* Verification Actions */}
                 <div className="space-y-2.5 pt-2">
                   <div className="grid grid-cols-2 gap-2">
-                    <button
+                    <RollButton
+                      size="sm"
+                      variant="secondary"
                       onClick={downloadQRCode}
-                      className="btn btn-sm btn-secondary w-full"
+                      icon={<Download className="w-3.5 h-3.5" />}
+                      className="w-full"
                     >
-                      <Download className="w-3.5 h-3.5" />
                       Unduh PNG
-                    </button>
+                    </RollButton>
 
-                    <button
+                    <RollButton
+                      size="sm"
+                      variant="secondary"
                       onClick={() => copyText(lastResult.verifyUrl, "link")}
-                      className="btn btn-sm btn-secondary w-full"
+                      icon={copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      className="w-full"
                     >
-                      {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                      Salin Link URL
-                    </button>
+                      {copiedLink ? "Tersalin!" : "Salin Link URL"}
+                    </RollButton>
                   </div>
 
                   {/* Direct Link to Verification Page */}
-                  <Link
+                  <RollLink
                     href={`/verify?serial=${encodeURIComponent(lastResult.serialNumber)}&hash=${lastResult.hash}`}
-                    className="btn btn-emerald w-full"
+                    variant="emerald"
+                    icon={<ShieldCheck className="w-4 h-4" />}
+                    iconAfter={<ExternalLink className="w-3.5 h-3.5 ml-auto opacity-75" />}
+                    className="w-full"
                   >
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Uji Halaman Verifikasi (Valid)</span>
-                    <ExternalLink className="w-3.5 h-3.5 ml-auto opacity-75" />
-                  </Link>
+                    Uji Halaman Verifikasi (Valid)
+                  </RollLink>
 
                   {/* Tampered Simulation Link (demonstrating Red Badge!) */}
-                  <Link
+                  <RollLink
                     href={`/verify?serial=${encodeURIComponent(lastResult.serialNumber)}&hash=${lastResult.hash.slice(0, -4)}dead`}
-                    className="btn btn-rose w-full"
+                    variant="rose"
+                    className="w-full"
                     title="Simulasikan pemalsuan data dengan mengubah 4 digit terakhir hash"
                   >
-                    <span>Simulasi Pemalsuan (Cek Red Badge)</span>
-                  </Link>
+                    Simulasi Pemalsuan (Cek Red Badge)
+                  </RollLink>
                 </div>
               </div>
             ) : (
@@ -502,14 +506,15 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <button
+            <RollButton
               onClick={fetchStoredDiplomas}
               disabled={loadingList}
-              className="btn btn-sm btn-secondary"
+              size="sm"
+              variant="secondary"
+              icon={<RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />}
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingList ? "animate-spin" : ""}`} />
-              <span>Muat Ulang Data</span>
-            </button>
+              Muat Ulang Data
+            </RollButton>
           </div>
 
           {/* Table of stored diplomas */}
@@ -541,7 +546,9 @@ export default function DashboardPage() {
                         </span>
                       </td>
                       <td className="py-3.5 px-3 text-right space-x-2">
-                        <button
+                        <RollButton
+                          size="sm"
+                          variant="secondary"
                           onClick={() => {
                             setFormData({
                               serialNumber: item.serialNumber,
@@ -553,18 +560,18 @@ export default function DashboardPage() {
                             });
                             handleGenerateOrRegenerate(true);
                           }}
-                          className="btn btn-sm btn-secondary"
                         >
                           Buka QR
-                        </button>
+                        </RollButton>
 
-                        <Link
+                        <RollLink
+                          size="sm"
+                          variant="emerald"
                           href={`/verify?serial=${encodeURIComponent(item.serialNumber)}&hash=${item.hash}`}
-                          className="btn btn-sm btn-emerald"
+                          icon={<ShieldCheck className="w-3.5 h-3.5" />}
                         >
-                          <ShieldCheck className="w-3.5 h-3.5" />
                           Verifikasi
-                        </Link>
+                        </RollLink>
                       </td>
                     </tr>
                   ))

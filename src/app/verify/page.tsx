@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { RollButton } from "@/components/roll-button";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -173,23 +174,15 @@ function VerifyContent() {
               <span>Petunjuk: Kosongkan field hash untuk memeriksa status nomor seri di basis data.</span>
             </div>
 
-            <button
+            <RollButton
               type="submit"
               disabled={loading || !serialInput.trim()}
-              className="btn btn-primary"
+              loading={loading}
+              loadingText="Memeriksa Integritas..."
+              icon={!loading ? <Search className="w-4 h-4" /> : undefined}
             >
-              {loading ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Memeriksa Integritas...</span>
-                </>
-              ) : (
-                <>
-                  <Search className="w-4 h-4" />
-                  <span>Verifikasi Ijazah</span>
-                </>
-              )}
-            </button>
+              Verifikasi Ijazah
+            </RollButton>
           </div>
         </form>
       </div>
@@ -368,13 +361,14 @@ function VerifyContent() {
                   <div className="flex items-center justify-between opacity-80 mb-1">
                     <span className="font-sans font-medium text-xs">Hash yang Disertakan (Input / QR Code):</span>
                     {result.inputHash && (
-                      <button
+                      <RollButton
+                        size="sm"
+                        variant="secondary"
                         onClick={() => copyToClipboard(result.inputHash || "")}
-                        className="btn btn-sm btn-secondary"
+                        icon={copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                       >
-                        {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                         Salin
-                      </button>
+                      </RollButton>
                     )}
                   </div>
                   <p className="break-all font-semibold">
@@ -391,13 +385,14 @@ function VerifyContent() {
                   <div className="flex items-center justify-between opacity-80 mb-1">
                     <span className="font-sans font-medium text-xs">Hash Resmi Terkalkulasi (Store Rekaman):</span>
                     {result.storedHash && (
-                      <button
+                      <RollButton
+                        size="sm"
+                        variant="secondary"
                         onClick={() => copyToClipboard(result.storedHash || "")}
-                        className="btn btn-sm btn-secondary"
+                        icon={copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                       >
-                        {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                         Salin
-                      </button>
+                      </RollButton>
                     )}
                   </div>
                   <p className="break-all font-semibold">

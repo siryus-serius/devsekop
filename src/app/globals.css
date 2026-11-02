@@ -251,150 +251,256 @@ html.light .card:hover {
 }
 
 /* ─────────────────────────────────────────────────────────
-   From Uiverse.io by cssbuttons-io - Ripple Scale Button (.btn)
-   Refined for Antislop: Natural Sentence-case Typography
+   From Uiverse.io by KINGFRESS - Kinetic Rolling Stagger Button (.btn)
+   Adapted for Antislop: Proportional sizing, accessible stagger, and high-DPI clarity
    ───────────────────────────────────────────────────────── */
+button:not(.bb8-toggle__checkbox),
 .btn {
-  position: relative;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-transform: none;
-  text-decoration: none;
-  padding: 0.65em 1.5em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  font-weight: 700;
+  color: white;
+  border-radius: 2rem;
   cursor: pointer;
-  border-radius: 9999px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 95.02px;
+  height: 42.66px;
+  padding: 0 1.25rem;
   border: none;
+  background-color: #3653f8;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  position: relative;
+  overflow: hidden;
   font-family: var(--font-inter);
-  color: #0f172a;
-  background-color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  line-height: 1;
+  text-decoration: none;
   vertical-align: middle;
   user-select: none;
   -webkit-user-select: none;
-  z-index: 1;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(54, 83, 248, 0.35);
 }
 
+button:not(.bb8-toggle__checkbox):hover,
 .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.btn:active {
+  box-shadow: 0 8px 22px rgba(54, 83, 248, 0.45);
   transform: translateY(-1px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-.btn::after {
-  content: "";
+button:not(.bb8-toggle__checkbox):active,
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(54, 83, 248, 0.3);
+}
+
+/* Rolling Span Mothers */
+button .span-mother,
+.btn .span-mother {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  line-height: 1.2;
+}
+
+button:hover .span-mother,
+.btn:hover .span-mother {
+  position: relative;
+}
+
+button .span-mother span,
+.btn .span-mother span {
   display: inline-block;
-  height: 100%;
-  width: 100%;
-  border-radius: 100px;
+  transform: translateY(0);
+}
+
+button:hover .span-mother span,
+.btn:hover .span-mother span {
+  transform: translateY(1.3em);
+}
+
+button .span-mother2,
+.btn .span-mother2 {
+  display: flex;
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-  background-color: #ffffff;
+  inset: 0;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  line-height: 1.2;
   pointer-events: none;
+  z-index: 2;
 }
 
-.btn:hover::after {
-  transform: scaleX(1.4) scaleY(1.6);
-  opacity: 0;
+button .span-mother2 span,
+.btn .span-mother2 span {
+  display: inline-block;
+  transform: translateY(-1.3em);
 }
 
-/* Disabled state */
-.btn:disabled,
-.btn[aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+button:hover .span-mother2 span,
+.btn:hover .span-mother2 span {
+  transform: translateY(0);
 }
-.btn:disabled::after,
-.btn[aria-disabled="true"]::after {
-  display: none;
-}
+
+/* nth-child stagger transitions (from KINGFRESS + extended) */
+button .span-mother span:nth-child(1),
+button .span-mother2 span:nth-child(1),
+.btn .span-mother span:nth-child(1),
+.btn .span-mother2 span:nth-child(1) { transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(2),
+button .span-mother2 span:nth-child(2),
+.btn .span-mother span:nth-child(2),
+.btn .span-mother2 span:nth-child(2) { transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(3),
+button .span-mother2 span:nth-child(3),
+.btn .span-mother span:nth-child(3),
+.btn .span-mother2 span:nth-child(3) { transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(4),
+button .span-mother2 span:nth-child(4),
+.btn .span-mother span:nth-child(4),
+.btn .span-mother2 span:nth-child(4) { transition: transform 0.5s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(5),
+button .span-mother2 span:nth-child(5),
+.btn .span-mother span:nth-child(5),
+.btn .span-mother2 span:nth-child(5) { transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(6),
+button .span-mother2 span:nth-child(6),
+.btn .span-mother span:nth-child(6),
+.btn .span-mother2 span:nth-child(6) { transition: transform 0.7s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(7),
+button .span-mother2 span:nth-child(7),
+.btn .span-mother span:nth-child(7),
+.btn .span-mother2 span:nth-child(7) { transition: transform 0.75s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(8),
+button .span-mother2 span:nth-child(8),
+.btn .span-mother span:nth-child(8),
+.btn .span-mother2 span:nth-child(8) { transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(9),
+button .span-mother2 span:nth-child(9),
+.btn .span-mother span:nth-child(9),
+.btn .span-mother2 span:nth-child(9) { transition: transform 0.84s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(10),
+button .span-mother2 span:nth-child(10),
+.btn .span-mother span:nth-child(10),
+.btn .span-mother2 span:nth-child(10) { transition: transform 0.88s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(11),
+button .span-mother2 span:nth-child(11),
+.btn .span-mother span:nth-child(11),
+.btn .span-mother2 span:nth-child(11) { transition: transform 0.91s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(12),
+button .span-mother2 span:nth-child(12),
+.btn .span-mother span:nth-child(12),
+.btn .span-mother2 span:nth-child(12) { transition: transform 0.94s cubic-bezier(0.2, 0, 0.2, 1); }
+
+button .span-mother span:nth-child(n+13),
+button .span-mother2 span:nth-child(n+13),
+.btn .span-mother span:nth-child(n+13),
+.btn .span-mother2 span:nth-child(n+13) { transition: transform 0.96s cubic-bezier(0.2, 0, 0.2, 1); }
 
 /* Size Variants */
 .btn-sm {
-  font-size: 11px;
-  padding: 0.45em 1.2em;
-  letter-spacing: 0.03em;
-}
-
-.btn-md {
-  font-size: 13px;
-  padding: 0.7em 1.8em;
+  min-width: 76px;
+  height: 33px;
+  padding: 0 0.85rem;
+  font-size: 11.5px;
 }
 
 .btn-lg {
-  font-size: 16px;
-  padding: 0.95em 2.4em;
+  min-width: 120px;
+  height: 48px;
+  padding: 0 1.6rem;
+  font-size: 15px;
 }
 
-/* Color & Theme Variants */
+/* Color Variants */
 .btn-primary {
-  background-color: #2563eb;
+  background-color: #3653f8;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-}
-.btn-primary::after {
-  background-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(54, 83, 248, 0.35);
 }
 .btn-primary:hover {
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
-}
-
-.btn-emerald {
-  background: linear-gradient(135deg, #059669, #0d9488);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
-}
-.btn-emerald::after {
-  background: #059669;
-}
-.btn-emerald:hover {
-  box-shadow: 0 10px 22px rgba(5, 150, 105, 0.45);
-}
-
-.btn-rose {
-  background: linear-gradient(135deg, #e11d48, #be123c);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
-}
-.btn-rose::after {
-  background: #e11d48;
-}
-.btn-rose:hover {
-  box-shadow: 0 10px 22px rgba(225, 29, 72, 0.45);
+  background-color: #2744e8;
+  box-shadow: 0 8px 22px rgba(54, 83, 248, 0.45);
 }
 
 .btn-secondary {
   background-color: #1e293b;
   color: #f8fafc;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
-.btn-secondary::after {
-  background-color: #1e293b;
+.btn-secondary:hover {
+  background-color: #2a3a52;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 html.light .btn-secondary {
-  background-color: #e5ded0;
+  background-color: #ece5d8;
   color: #292524;
   border: 1px solid #d4caa8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-html.light .btn-secondary::after {
-  background-color: #e5ded0;
+html.light .btn-secondary:hover {
+  background-color: #e2dac9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-emerald {
+  background-color: #059669;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+.btn-emerald:hover {
+  background-color: #047857;
+  box-shadow: 0 8px 22px rgba(5, 150, 105, 0.45);
+}
+
+.btn-rose {
+  background-color: #e11d48;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+}
+.btn-rose:hover {
+  background-color: #be123c;
+  box-shadow: 0 8px 22px rgba(225, 29, 72, 0.45);
+}
+
+/* Disabled state */
+button:disabled,
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button .span-mother span,
+  button .span-mother2 span,
+  .btn .span-mother span,
+  .btn .span-mother2 span {
+    transition: none !important;
+    transform: none !important;
+  }
+  button .span-mother2,
+  .btn .span-mother2 {
+    display: none !important;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────
