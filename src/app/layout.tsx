@@ -3,11 +3,12 @@ import "./globals.css";
 import Link from "next/link";
 import { Shield, QrCode, CheckCircle2 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LenisProvider } from "@/components/lenis-provider";
 
 export const metadata: Metadata = {
-  title: "Vault Ijazah Digital | QR & SHA-256 Engine",
+  title: "Digital Diploma Vault | QR & SHA-256 Engine",
   description:
-    "Platform Verifikasi dan Pembuatan QR Code Ijazah Digital Berbasis Deterministic SHA-256 Hashing.",
+    "Cryptographic diploma verification and QR code issuance engine powered by deterministic SHA-256 hashing.",
 };
 
 export default function RootLayout({
@@ -16,8 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
+        {/* Google Fonts: Inter (Medium - Bold) & Instrument Serif */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+
         {/* Anti-FOUC inline script to immediately set theme class */}
         <script
           dangerouslySetInnerHTML={{
@@ -38,77 +47,78 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased selection:bg-blue-600 selection:text-white flex flex-col min-h-screen">
-        {/* Subtle Ambient Background Lighting */}
-        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-96 h-96 ambient-glow-1 rounded-full blur-3xl transition-colors duration-500"></div>
-          <div className="absolute top-1/3 -right-40 w-96 h-96 ambient-glow-2 rounded-full blur-3xl transition-colors duration-500"></div>
-          <div className="absolute -bottom-40 left-1/3 w-96 h-96 ambient-glow-3 rounded-full blur-3xl transition-colors duration-500"></div>
-        </div>
-
-        {/* Global Navigation Header */}
-        <header className="sticky top-0 z-50 glass-panel border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <Shield className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="font-bold text-lg tracking-tight">
-                  Vault Ijazah Digital
-                </span>
-                <span className="hidden sm:inline-block ml-2 text-xs uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold theme-badge">
-                  Phase-1
-                </span>
-              </div>
-            </Link>
-
-            <nav className="flex items-center gap-2 sm:gap-4">
-              <Link
-                href="/"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                <QrCode className="w-4 h-4 text-blue-500" />
-                <span className="hidden sm:inline">Dashboard & QR</span>
-              </Link>
-
-              <Link
-                href="/verify"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span className="hidden sm:inline">Verifikasi Publik</span>
-              </Link>
-
-              {/* Theme Toggle Button */}
-              <div className="pl-1 border-l border-black/10 dark:border-white/10">
-                <ThemeToggle />
-              </div>
-            </nav>
+      <body className="antialiased selection:bg-[#22396F] selection:text-[#FCF1D0] flex flex-col min-h-screen">
+        <LenisProvider>
+          {/* Subtle Ambient Background Lighting & Security Texture Variations */}
+          <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[360px] ambient-glow-1 rounded-full blur-3xl opacity-75 transition-colors duration-700"></div>
+            <div className="absolute top-1/3 -right-32 w-80 h-80 ambient-glow-2 rounded-full blur-3xl opacity-60 transition-colors duration-700"></div>
+            <div className="absolute -bottom-32 -left-20 w-80 h-80 ambient-glow-3 rounded-full blur-3xl opacity-50 transition-colors duration-700"></div>
+            <div className="bg-vault-grid"></div>
+            <div className="bg-vault-watermark"></div>
           </div>
-        </header>
 
-        {/* Main Application Container */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
+          {/* Global Navigation Header */}
+          <header className="sticky top-0 z-50 glass-panel border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="p-2 rounded-xl theme-badge shadow-sm group-hover:scale-105 transition-transform">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-bold tracking-tight font-serif text-xl sm:text-2xl text-[var(--text-primary)]">
+                    Digital Diploma Vault
+                  </span>
+                </div>
+              </Link>
 
-        {/* Footer */}
-        <footer className="glass-panel border-t py-6 text-center text-xs opacity-70">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>
-              © {new Date().getFullYear()} Digital Diploma Vault • DevSecOps Phase-1 Implementation
-            </p>
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                SHA-256 Engine Active
-              </span>
-              <span>•</span>
-              <span>In-Memory Store</span>
+              <nav className="flex items-center gap-2 sm:gap-4">
+                <Link
+                  href="/"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                >
+                  <QrCode className="w-4 h-4 text-[var(--text-secondary)]" />
+                  <span className="hidden sm:inline">Dashboard & QR</span>
+                </Link>
+
+                <Link
+                  href="/verify"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span className="hidden sm:inline">Public Verification</span>
+                </Link>
+
+                {/* Theme Toggle Button */}
+                <div className="pl-2 border-l border-black/10 dark:border-white/10 flex items-center">
+                  <ThemeToggle />
+                </div>
+              </nav>
             </div>
-          </div>
-        </footer>
+          </header>
+
+          {/* Main Application Container */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {children}
+          </main>
+
+          {/* Footer */}
+          <footer className="glass-panel border-t py-6 text-center text-xs opacity-70">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p>
+                © {new Date().getFullYear()} Digital Diploma Vault • DevSecOps Phase-1 Implementation
+              </p>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                  SHA-256 Engine Active
+                </span>
+                <span>•</span>
+                <span>In-Memory Store</span>
+              </div>
+            </div>
+          </footer>
+        </LenisProvider>
       </body>
     </html>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -14,7 +13,6 @@ export function ThemeToggle() {
       setTheme(saved);
       applyTheme(saved);
     } else {
-      // Default to dark or match system
       const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
       const initial = prefersLight ? "light" : "dark";
       setTheme(initial);
@@ -42,31 +40,58 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-xl bg-slate-800/40 border border-slate-700/50 animate-pulse" />
+      <div className="bb8-toggle opacity-50 pointer-events-none" aria-hidden="true">
+        <div className="bb8-toggle__container" />
+      </div>
     );
   }
 
   return (
-    <button
-      onClick={toggleTheme}
-      type="button"
-      className="relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 border cursor-pointer
-        light:bg-[#e8e2d5] light:border-[#d4cbba] light:text-[#44403c] light:hover:bg-[#dfd8ca] light:hover:text-[#1c1917] light:shadow-sm
-        dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
-      title={theme === "dark" ? "Ganti ke Tema Beige (Eye-Friendly)" : "Ganti ke Tema Dark"}
-      aria-label="Toggle Theme"
+    <label
+      className="bb8-toggle"
+      title={
+        theme === "dark"
+          ? "BB-8: Dark Mode Active (Click for Warm Parchment Light Mode)"
+          : "BB-8: Light Mode Active (Click for Midnight Dark Mode)"
+      }
     >
-      {theme === "dark" ? (
-        <>
-          <Sun className="w-4 h-4 text-amber-400" />
-          <span className="hidden sm:inline">Beige Mode</span>
-        </>
-      ) : (
-        <>
-          <Moon className="w-4 h-4 text-indigo-600" />
-          <span className="hidden sm:inline">Dark Mode</span>
-        </>
-      )}
-    </button>
+      <input
+        className="bb8-toggle__checkbox"
+        type="checkbox"
+        checked={theme === "dark"}
+        onChange={toggleTheme}
+        aria-label="Toggle Theme Dark or Light with BB-8"
+      />
+      <div className="bb8-toggle__container">
+        <div className="bb8-toggle__scenery">
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="bb8-toggle__star" />
+          <div className="tatto-1" />
+          <div className="tatto-2" />
+          <div className="gomrassen" />
+          <div className="hermes" />
+          <div className="chenini" />
+          <div className="bb8-toggle__cloud" />
+          <div className="bb8-toggle__cloud" />
+          <div className="bb8-toggle__cloud" />
+        </div>
+        <div className="bb8">
+          <div className="bb8__head-container">
+            <div className="bb8__antenna" />
+            <div className="bb8__antenna" />
+            <div className="bb8__head" />
+          </div>
+          <div className="bb8__body" />
+        </div>
+        <div className="artificial__hidden">
+          <div className="bb8__shadow" />
+        </div>
+      </div>
+    </label>
   );
 }
