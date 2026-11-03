@@ -62,8 +62,8 @@ export default function RootLayout({
           <header className="sticky top-0 z-50 glass-panel border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="p-2 rounded-xl bg-gradient-to-tr from-[#22396F] to-[#0D1C42] border border-[#22396F]/40 text-[#FCF1D0] shadow-md shadow-[#010736]/30 group-hover:scale-105 transition-transform">
-                  <Shield className="w-5 h-5 text-[#FCF1D0]" />
+                <div className="p-2 rounded-xl theme-badge shadow-sm group-hover:scale-105 transition-transform">
+                  <Shield className="w-5 h-5" />
                 </div>
                 <div>
                   <span className="font-bold tracking-tight font-serif text-xl sm:text-2xl text-[var(--text-primary)]">
@@ -77,7 +77,7 @@ export default function RootLayout({
                   href="/"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
                 >
-                  <QrCode className="w-4 h-4 text-[#22396F] dark:text-[#FCF1D0]/80" />
+                  <QrCode className="w-4 h-4 text-[var(--text-secondary)]" />
                   <span className="hidden sm:inline">Dashboard & QR</span>
                 </Link>
 

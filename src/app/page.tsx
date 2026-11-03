@@ -234,7 +234,7 @@ export default function DashboardPage() {
           <div ref={formRef} className="lg:col-span-7 p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#22396F]/20 text-[#22396F] dark:text-[#FCF1D0] border border-[#22396F]/30">
+                <div className="p-2.5 rounded-xl theme-badge">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
               {/* Serial Number */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  <Hash className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Diploma Serial Number <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -274,7 +274,7 @@ export default function DashboardPage() {
               {/* Student ID */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  <Hash className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Student ID / Matriculation No. <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -290,7 +290,7 @@ export default function DashboardPage() {
               {/* Student Name */}
               <div className="sm:col-span-2 space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <User className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  <User className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Full Legal Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -306,7 +306,7 @@ export default function DashboardPage() {
               {/* Issue Date */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                  <Calendar className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Conferral Date <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -321,7 +321,7 @@ export default function DashboardPage() {
               {/* Major */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
+                  <GraduationCap className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Degree / Major Program
                 </label>
                 <input
@@ -336,7 +336,7 @@ export default function DashboardPage() {
               {/* University */}
               <div className="sm:col-span-2 space-y-1.5">
                 <label className="text-xs font-semibold opacity-80 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <Building className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                  <Building className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                   Awarding Institution
                 </label>
                 <input
@@ -411,7 +411,7 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                      <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                      <Hash className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                       Computed SHA-256 Hash
                     </span>
                     <RollButton
@@ -495,13 +495,13 @@ export default function DashboardPage() {
       <div ref={tableRef} className="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#22396F]/20 text-[#22396F] dark:text-[#FCF1D0] border border-[#22396F]/30">
+            <div className="p-2.5 rounded-xl theme-badge">
               <Database className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-[var(--text-primary)]">Stored Credential Registry (In-Memory Store)</h2>
               <p className="text-xs text-[var(--text-muted)]">
-                Active credential records verifiable via the <code className="text-[#22396F] dark:text-[#FCF1D0] font-mono font-semibold">/api/verify</code> endpoint
+                Active credential records verifiable via the <code className="theme-code-block px-1.5 py-0.5 rounded text-xs font-mono font-semibold">/api/verify</code> endpoint
               </p>
             </div>
           </div>
@@ -534,7 +534,7 @@ export default function DashboardPage() {
               {storedList.length > 0 ? (
                 storedList.map((item) => (
                   <tr key={item.serialNumber} className="transition font-sans">
-                    <td className="py-3.5 px-3 font-mono font-bold text-[#22396F] dark:text-[#FCF1D0]">
+                    <td className="py-3.5 px-3 font-mono font-bold text-[var(--text-primary)]">
                       {item.serialNumber}
                     </td>
                     <td className="py-3.5 px-3 font-semibold text-[var(--text-primary)]">{item.studentName}</td>

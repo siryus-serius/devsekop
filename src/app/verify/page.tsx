@@ -175,7 +175,7 @@ function VerifyContent() {
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div className="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70 shrink-0" />
+              <Info className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)] shrink-0" />
               <span>Tip: Leave the hash field blank to query the serial number record in the registry.</span>
             </div>
 
@@ -278,7 +278,7 @@ function VerifyContent() {
             {/* Header Record */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#22396F]/20 text-[#22396F] dark:text-[#FCF1D0] border border-[#22396F]/30">
+                <div className="p-2.5 rounded-xl theme-badge">
                   <GraduationCap className="w-5 h-5" />
                 </div>
                 <div>
@@ -289,7 +289,7 @@ function VerifyContent() {
               {result.diploma?.serialNumber && (
                 <div className="text-left sm:text-right">
                   <span className="text-[11px] opacity-60 block uppercase font-mono text-[var(--text-muted)]">Official Serial No.</span>
-                  <span className="text-sm font-mono font-bold text-[#22396F] dark:text-[#FCF1D0]">
+                  <span className="text-sm font-mono font-bold text-[var(--text-primary)]">
                     {result.diploma.serialNumber}
                   </span>
                 </div>
@@ -301,7 +301,7 @@ function VerifyContent() {
               <dl className="divide-y divide-black/10 dark:divide-white/10 text-sm">
                 <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
                   <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <User className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                    <User className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                     Full Legal Name
                   </dt>
                   <dd className="mt-1 sm:mt-0 sm:col-span-2 font-bold text-base text-[var(--text-primary)]">
@@ -311,7 +311,7 @@ function VerifyContent() {
 
                 <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
                   <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <Hash className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                    <Hash className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                     Student ID / Matriculation No.
                   </dt>
                   <dd className="mt-1 sm:mt-0 sm:col-span-2 font-mono font-semibold text-[var(--text-primary)]">
@@ -331,7 +331,7 @@ function VerifyContent() {
 
                 <div className="py-3.5 sm:grid sm:grid-cols-3 sm:gap-4 items-center">
                   <dt className="text-xs font-semibold opacity-70 uppercase tracking-wider flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <Building className="w-3.5 h-3.5 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                    <Building className="w-3.5 h-3.5 opacity-70 text-[var(--text-secondary)]" />
                     Awarding Institution
                   </dt>
                   <dd className="mt-1 sm:mt-0 sm:col-span-2 font-medium text-[var(--text-primary)]">
@@ -354,7 +354,7 @@ function VerifyContent() {
             {/* Cryptographic Proof Section */}
             <div className="pt-4 border-t border-black/10 dark:border-white/10 space-y-4">
               <div className="flex items-center gap-2">
-                <Hash className="w-4 h-4 text-[#22396F] dark:text-[#FCF1D0]/70" />
+                <Hash className="w-4 h-4 opacity-70 text-[var(--text-secondary)]" />
                 <h4 className="text-xs font-semibold uppercase tracking-wider opacity-80 text-[var(--text-secondary)]">
                   Cryptographic Integrity Audit (SHA-256)
                 </h4>
@@ -455,7 +455,7 @@ export default function VerifyPage() {
     <Suspense
       fallback={
         <div className="max-w-4xl mx-auto py-16 text-center opacity-70">
-          <div className="w-8 h-8 border-2 border-[#22396F] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-2 border-[var(--text-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-sm text-[var(--text-secondary)]">Loading Credential Verification Portal...</p>
         </div>
       }
