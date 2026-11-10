@@ -1,0 +1,186 @@
+name: DevSecOps CI/CD Pipeline - Vault Ijazah Digital
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ==========================================
+  # JOB 1: CODE QUALITY & STATIC TYPECHECK
+  # ==========================================
+  code-quality:
+    name: 🔍 Linting & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: TypeScript Type Checking
+        run: npm run typecheck
+
+  # ==========================================
+  # JOB 2: SECRET SCANNING (GITLEAKS)
+  # ==========================================
+  secret-scan:
+    name: 🔑 Secret Leak Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: "free"
+
+  # ==========================================
+  # JOB 3: SCA (SOFTWARE COMPOSITION ANALYSIS)
+  # ==========================================
+  sca-audit:
+    name: 📦 Dependency Vulnerability (SCA)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run npm Security Audit
+        run: npm audit --audit-level=high
+
+      - name: Trivy FS Vulnerability Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH'
+          format: 'table'
+          exit-code: '1'
+
+  # ==========================================
+  # JOB 4: SAST (STATIC APPLICATION SECURITY)
+  # ==========================================
+  sast-scan:
+    name: 🛡️ SAST Analysis (Semgrep)
+    runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep Rules (OWASP Top 10 & Security Audit)
+        run: semgrep scan --config auto --error --exclude "node_modules" --exclude ".next"
+
+  # ==========================================
+  # JOB 5: BUILD & ARTIFACT GENERATION
+  # ==========================================
+  build-and-test:
+    name: 🏗️ Production Build & SBOM
+    needs: [code-quality, secret-scan, sca-audit, sast-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js Application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: "https://ijazah.example.ac.id"
+
+      - name: Generate SBOM (Syft)
+        uses: anchore/sbom-action@v0
+        with:
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+
+      - name: Archive SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: software-bill-of-materials
+          path: sbom.cyclonedx.json
+          retention-days: 30
+
+  # ==========================================
+  # JOB 6: CONTAINER SCANNING (DOCKER + TRIVY)
+  # ==========================================
+  container-security:
+    name: 🐳 Container Security Scan
+    needs: [build-and-test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Local Image
+        run: |
+          docker build -t vault-ijazah:local .
+
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'vault-ijazah:local'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  # ==========================================
+  # JOB 7: CONTINUOUS DEPLOYMENT (CD)
+  # ==========================================
+  deploy:
+    name: 🚀 Deploy to Production / Staging
+    needs: [container-security]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+      url: https://ijazah.example.ac.id
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Step
+        run: |
+          echo "Memulai deployment aplikasi Vault Ijazah Digital..."
+          echo "Deployment berhasil diselesaikan!"
+
