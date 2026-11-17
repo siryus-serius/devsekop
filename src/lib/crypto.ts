@@ -27,6 +27,8 @@ export interface DiplomaRecord extends DiplomaPayload {
   createdAt: string;
   updatedAt: string;
   version: number;
+  /** Hash-chain link info (present when backed by the Supabase ledger). */
+  ledger?: { entryHash: string; prevHash: string };
 }
 
 /**

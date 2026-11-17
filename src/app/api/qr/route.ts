@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
 import { generateDiplomaHash } from "@/lib/crypto";
-import { getAllDiplomas, getDiplomaBySerial, saveOrUpdateDiploma } from "@/lib/store";
+import { getRegistry } from "@/lib/registry";
 
 function getBaseUrl(request: NextRequest): string {
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
@@ -23,16 +23,23 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const serial = searchParams.get("serial");
 
-  if (serial) {
-    const item = getDiplomaBySerial(serial);
-    if (!item) {
-      return NextResponse.json({ success: false, error: "Diploma not found" }, { status: 404 });
-    }
-    return NextResponse.json({ success: true, diploma: item });
-  }
+  try {
+    const registry = getRegistry();
 
-  const items = getAllDiplomas();
-  return NextResponse.json({ success: true, count: items.length, diplomas: items });
+    if (serial) {
+      const item = await registry.getBySerial(serial);
+      if (!item) {
+        return NextResponse.json({ success: false, error: "Diploma not found" }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, diploma: item });
+    }
+
+    const items = await registry.list();
+    return NextResponse.json({ success: true, count: items.length, diplomas: items });
+  } catch (error: unknown) {
+    console.error("[api/qr] registry read failed:", error);
+    return NextResponse.json({ success: false, error: "Registry unavailable" }, { status: 503 });
+  }
 }
 
 /**
@@ -83,13 +90,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // 4. Save or update record in memory store
-    const record = saveOrUpdateDiploma({
-      ...payload,
-      hash,
-      qrCodeUrl,
-      verifyUrl,
-    });
+    // 4. Append record to the registry (memory or Supabase ledger)
+    const record = await getRegistry().issue({ ...payload, hash });
 
     return NextResponse.json({
       success: true,

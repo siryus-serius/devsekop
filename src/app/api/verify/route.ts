@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateDiplomaHash } from "@/lib/crypto";
-import { getDiplomaBySerial } from "@/lib/store";
+import { getRegistry } from "@/lib/registry";
 
 export type VerificationStatus = "valid" | "invalid" | "not_found";
 
@@ -45,7 +45,16 @@ export async function GET(request: NextRequest) {
   }
 
   // 1. Look up diploma by serial number
-  const record = getDiplomaBySerial(serial);
+  let record;
+  try {
+    record = await getRegistry().getBySerial(serial);
+  } catch (error: unknown) {
+    console.error("[api/verify] registry read failed:", error);
+    return NextResponse.json(
+      { success: false, status: "invalid", message: "Registry is temporarily unavailable." },
+      { status: 503 }
+    );
+  }
 
   if (!record) {
     return NextResponse.json(

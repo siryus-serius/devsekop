@@ -52,6 +52,25 @@ src/
 
 ---
 
+## 🗄️ Penyimpanan: Supabase Ledger
+
+Data ijazah disimpan di tabel **append-only berantai hash** (`diploma_ledger`) di Supabase — perilakunya seperti blockchain privat, dan nantinya `entry_hash` bisa di-*anchor* ke blockchain publik.
+
+- Tidak ada UPDATE/DELETE (diblokir trigger). Perubahan data = entri versi baru.
+- Tiap entri menyimpan `prev_hash` → mengubah satu baris memutus rantai.
+- Hanya server (service role) yang bisa akses; `anon`/`authenticated` diblokir RLS.
+- Backend bisa ditukar via `REGISTRY_BACKEND` (`supabase` / `memory`) — lihat [src/lib/registry/](src/lib/registry/).
+
+**Setup:**
+1. Buat project di [supabase.com](https://supabase.com).
+2. SQL Editor → jalankan [supabase/migrations/0001_diploma_ledger.sql](supabase/migrations/0001_diploma_ledger.sql), lalu (opsional) [supabase/seed.sql](supabase/seed.sql).
+3. Salin `.env.example` → `.env.local`, isi `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API).
+4. `npm run dev`.
+
+Audit integritas rantai: `select * from verify_diploma_ledger();` — hasil kosong = rantai utuh.
+
+---
+
 ## 🛡️ DevSecOps CI/CD Pipeline
 
 Panduan dan alur otomatisasi keamanan CI/CD tersedia dalam dua versi:
