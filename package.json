@@ -43,7 +43,7 @@
     "hardhat": "^2.29.1",
     "postcss": "^8.5.32",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "next": {
