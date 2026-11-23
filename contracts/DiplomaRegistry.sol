@@ -22,11 +22,14 @@ contract DiplomaRegistry is AccessControl {
 
     struct Diploma {
         bytes32 docHash; // SHA-256 dari file PDF final
-        uint64 issuedAt; // 0 = belum pernah diterbitkan
-        uint64 revokedAt; // 0 = belum dicabut
+        uint64 issuedAt; // waktu terbit (informasi saja, tidak dipakai untuk logika)
+        uint64 revokedAt; // waktu cabut (informasi saja, tidak dipakai untuk logika)
     }
 
     /// @dev serialKey = keccak256(nomor seri). Nomor seri mentah tetap off-chain.
+    ///      Status disimpan terpisah agar logika tidak bergantung pada block.timestamp
+    ///      (temuan Slither: incorrect-equality & timestamp).
+    mapping(bytes32 serialKey => Status) private _status;
     mapping(bytes32 serialKey => Diploma) private _diplomas;
     mapping(bytes32 docHash => bytes32 serialKey) private _serialOfHash;
 
@@ -48,9 +51,10 @@ contract DiplomaRegistry is AccessControl {
     /// @notice Mencatat ijazah baru.
     function issue(bytes32 serialKey, bytes32 docHash) external onlyRole(ISSUER_ROLE) {
         if (serialKey == bytes32(0) || docHash == bytes32(0)) revert ZeroValue();
-        if (_diplomas[serialKey].issuedAt != 0) revert AlreadyIssued();
+        if (_status[serialKey] != Status.NotFound) revert AlreadyIssued();
         if (_serialOfHash[docHash] != bytes32(0)) revert HashAlreadyRegistered();
 
+        _status[serialKey] = Status.Valid;
         _diplomas[serialKey] = Diploma({docHash: docHash, issuedAt: uint64(block.timestamp), revokedAt: 0});
         _serialOfHash[docHash] = serialKey;
         emit DiplomaIssued(serialKey, docHash, msg.sender);
@@ -58,20 +62,19 @@ contract DiplomaRegistry is AccessControl {
 
     /// @notice Mencabut ijazah. Catatan penerbitan tetap ada sebagai jejak audit.
     function revoke(bytes32 serialKey) external onlyRole(ISSUER_ROLE) {
-        Diploma storage d = _diplomas[serialKey];
-        if (d.issuedAt == 0) revert NotIssued();
-        if (d.revokedAt != 0) revert AlreadyRevoked();
+        Status current = _status[serialKey];
+        if (current == Status.NotFound) revert NotIssued();
+        if (current == Status.Revoked) revert AlreadyRevoked();
 
-        d.revokedAt = uint64(block.timestamp);
+        _status[serialKey] = Status.Revoked;
+        _diplomas[serialKey].revokedAt = uint64(block.timestamp);
         emit DiplomaRevoked(serialKey, msg.sender);
     }
 
     /// @notice Cek ijazah lewat nomor seri (alur scan QR). Gratis, tanpa gas.
     function getBySerial(bytes32 serialKey) public view returns (Status status, Diploma memory diploma) {
+        status = _status[serialKey];
         diploma = _diplomas[serialKey];
-        if (diploma.issuedAt == 0) status = Status.NotFound;
-        else if (diploma.revokedAt != 0) status = Status.Revoked;
-        else status = Status.Valid;
     }
 
     /// @notice Cek ijazah lewat hash file PDF (alur unggah PDF). Gratis, tanpa gas.

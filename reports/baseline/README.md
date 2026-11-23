@@ -10,7 +10,7 @@ Kondisi: setelah penyederhanaan arsitektur, **sebelum** perbaikan keamanan lanju
 | Gitleaks `git` | Secrets | Riwayat commit | 0 temuan | `gitleaks-history.json` |
 | Gitleaks `--pre-commit` | Secrets | Perubahan belum di-commit | 0 temuan | `gitleaks-uncommitted.json` |
 | Semgrep | SAST aplikasi | `src/` | Dijalankan di GitHub Actions | tab Security (SARIF) |
-| Slither | SAST kontrak | `contracts/` | Dijalankan di GitHub Actions | tab Security (SARIF) |
+| Slither | SAST kontrak | `contracts/` | **2 temuan**: 1 medium (`incorrect-equality`), 1 low (`timestamp`). Gate memblokir | `slither.txt` |
 
 ## Catatan
 

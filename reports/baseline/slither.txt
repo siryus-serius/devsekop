@@ -1,0 +1,17 @@
+Slither 0.11.4 — GitHub Actions (crytic/slither-action@v0.4.1, fail-on: medium)
+Target: contracts/DiplomaRegistry.sol (commit sebelum perbaikan)
+Hasil: JOB GAGAL (security gate memblokir) — 2 temuan
+
+Detector: incorrect-equality   [Medium]
+DiplomaRegistry.getBySerial(bytes32) (contracts/DiplomaRegistry.sol#70-75) uses a dangerous strict equality:
+    - diploma.issuedAt == 0 (contracts/DiplomaRegistry.sol#72)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: timestamp   [Low]
+DiplomaRegistry.getBySerial(bytes32) (contracts/DiplomaRegistry.sol#70-75) uses timestamp for comparisons
+    Dangerous comparisons:
+    - diploma.issuedAt == 0 (contracts/DiplomaRegistry.sol#72)
+    - diploma.revokedAt != 0 (contracts/DiplomaRegistry.sol#73)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+. analyzed (6 contracts with 98 detectors), 2 result(s) found
