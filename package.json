@@ -48,6 +48,9 @@
   "overrides": {
     "next": {
       "postcss": "^8.5.32"
-    }
+    },
+    "lodash": "^4.18.1",
+    "tmp": "^0.2.7",
+    "serialize-javascript": "^7.1.4"
   }
 }

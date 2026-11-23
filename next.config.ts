@@ -17,6 +17,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Hasil build mandiri untuk image Docker (diabaikan oleh Vercel).
+  output: "standalone",
   reactStrictMode: true,
   serverExternalPackages: ["qrcode"],
   experimental: {

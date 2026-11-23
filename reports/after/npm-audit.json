@@ -1,0 +1,719 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@ethersproject/abi": {
+      "name": "@ethersproject/abi",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/hash"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-verify",
+        "hardhat",
+        "hardhat-gas-reporter"
+      ],
+      "range": "5.0.10 - 5.8.0",
+      "nodes": [
+        "node_modules/@ethersproject/abi"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/abstract-provider": {
+      "name": "@ethersproject/abstract-provider",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/transactions"
+      ],
+      "effects": [
+        "@ethersproject/abstract-signer"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@ethersproject/abstract-provider"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/abstract-signer": {
+      "name": "@ethersproject/abstract-signer",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/abstract-provider"
+      ],
+      "effects": [
+        "@ethersproject/hash"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@ethersproject/abstract-signer"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/hash": {
+      "name": "@ethersproject/hash",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/abstract-signer"
+      ],
+      "effects": [
+        "@ethersproject/abi"
+      ],
+      "range": "5.0.6 - 5.8.0",
+      "nodes": [
+        "node_modules/@ethersproject/hash"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/signing-key": {
+      "name": "@ethersproject/signing-key",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "elliptic"
+      ],
+      "effects": [
+        "@ethersproject/transactions"
+      ],
+      "range": "<=5.8.0",
+      "nodes": [
+        "node_modules/@ethersproject/signing-key"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/transactions": {
+      "name": "@ethersproject/transactions",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/signing-key"
+      ],
+      "effects": [
+        "@ethersproject/abstract-provider"
+      ],
+      "range": "<=5.8.0",
+      "nodes": [
+        "node_modules/@ethersproject/transactions"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-ignition": {
+      "name": "@nomicfoundation/hardhat-ignition",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@nomicfoundation/hardhat-verify",
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-ignition-viem"
+      ],
+      "range": "<=0.15.16",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-ignition"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-ignition-viem": {
+      "name": "@nomicfoundation/hardhat-ignition-viem",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@nomicfoundation/hardhat-ignition",
+        "@nomicfoundation/hardhat-viem",
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": "<=0.15.17",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-ignition-viem"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-network-helpers": {
+      "name": "@nomicfoundation/hardhat-network-helpers",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "ethereumjs-util",
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": "<=1.1.2",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-network-helpers"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-toolbox-viem": {
+      "name": "@nomicfoundation/hardhat-toolbox-viem",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@nomicfoundation/hardhat-ignition-viem",
+        "@nomicfoundation/hardhat-network-helpers",
+        "@nomicfoundation/hardhat-verify",
+        "@nomicfoundation/hardhat-viem",
+        "hardhat",
+        "hardhat-gas-reporter",
+        "solidity-coverage"
+      ],
+      "effects": [],
+      "range": "<=4.1.2",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-verify": {
+      "name": "@nomicfoundation/hardhat-verify",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/abi",
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-ignition",
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": "<=3.1.1",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-verify"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@nomicfoundation/hardhat-viem": {
+      "name": "@nomicfoundation/hardhat-viem",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-ignition-viem",
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": "<=2.1.5",
+      "nodes": [
+        "node_modules/@nomicfoundation/hardhat-viem"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "@sentry/node": {
+      "name": "@sentry/node",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "cookie"
+      ],
+      "effects": [
+        "hardhat"
+      ],
+      "range": "4.0.0-beta.0 - 7.74.2-alpha.1",
+      "nodes": [
+        "node_modules/@sentry/node"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "bn.js": {
+      "name": "bn.js",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113442,
+          "name": "bn.js",
+          "dependency": "bn.js",
+          "title": "bn.js affected by an infinite loop",
+          "url": "https://github.com/advisories/GHSA-378v-28hj-76wf",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<4.12.3"
+        }
+      ],
+      "effects": [
+        "ethjs-unit",
+        "number-to-bn"
+      ],
+      "range": "<4.12.3",
+      "nodes": [
+        "node_modules/ethjs-unit/node_modules/bn.js",
+        "node_modules/number-to-bn/node_modules/bn.js"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "cookie": {
+      "name": "cookie",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1103907,
+          "name": "cookie",
+          "dependency": "cookie",
+          "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+          "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+          "severity": "low",
+          "cwe": [
+            "CWE-74"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.7.0"
+        }
+      ],
+      "effects": [
+        "@sentry/node"
+      ],
+      "range": "<0.7.0",
+      "nodes": [
+        "node_modules/@sentry/node/node_modules/cookie"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "diff": {
+      "name": "diff",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1112706,
+          "name": "diff",
+          "dependency": "diff",
+          "title": "jsdiff has a Denial of Service vulnerability in parsePatch and applyPatch",
+          "url": "https://github.com/advisories/GHSA-73rr-hh4g-fpgx",
+          "severity": "low",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=6.0.0 <8.0.3"
+        }
+      ],
+      "effects": [
+        "mocha"
+      ],
+      "range": "6.0.0 - 8.0.2",
+      "nodes": [
+        "node_modules/diff"
+      ],
+      "fixAvailable": true
+    },
+    "elliptic": {
+      "name": "elliptic",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1112030,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic Uses a Cryptographic Primitive with a Risky Implementation",
+          "url": "https://github.com/advisories/GHSA-848j-6mx2-7j84",
+          "severity": "low",
+          "cwe": [
+            "CWE-1240"
+          ],
+          "cvss": {
+            "score": 5.6,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L"
+          },
+          "range": "<=6.6.1"
+        }
+      ],
+      "effects": [
+        "@ethersproject/signing-key",
+        "secp256k1"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/elliptic"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "ethereum-cryptography": {
+      "name": "ethereum-cryptography",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "secp256k1"
+      ],
+      "effects": [
+        "ethereumjs-util"
+      ],
+      "range": "0.1.0 - 0.1.3",
+      "nodes": [
+        "node_modules/ethereum-cryptography"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "ethereumjs-util": {
+      "name": "ethereumjs-util",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "ethereum-cryptography"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-network-helpers"
+      ],
+      "range": "4.5.1 || 5.2.1 || 6.2.1 || >=7.0.3",
+      "nodes": [
+        "node_modules/ethereumjs-util"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "ethjs-unit": {
+      "name": "ethjs-unit",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "bn.js",
+        "number-to-bn"
+      ],
+      "effects": [
+        "web3-utils"
+      ],
+      "range": ">=0.1.3",
+      "nodes": [
+        "node_modules/ethjs-unit"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "glob": {
+      "name": "glob",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244013,
+          "name": "glob",
+          "dependency": "glob",
+          "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+          "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=9.0.0 <=14.0.1"
+        },
+        "minimatch"
+      ],
+      "effects": [
+        "hardhat-gas-reporter",
+        "mocha"
+      ],
+      "range": "9.0.0 - 14.0.1",
+      "nodes": [
+        "node_modules/glob"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "hardhat": {
+      "name": "hardhat",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "@ethersproject/abi",
+        "@sentry/node"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-ignition",
+        "@nomicfoundation/hardhat-ignition-viem",
+        "@nomicfoundation/hardhat-network-helpers",
+        "@nomicfoundation/hardhat-toolbox-viem",
+        "@nomicfoundation/hardhat-verify",
+        "@nomicfoundation/hardhat-viem",
+        "hardhat-gas-reporter",
+        "solidity-coverage"
+      ],
+      "range": "0.1.0-rc.0 - 3.0.0-next.32",
+      "nodes": [
+        "node_modules/hardhat"
+      ],
+      "fixAvailable": {
+        "name": "hardhat",
+        "version": "3.22.0",
+        "isSemVerMajor": true
+      }
+    },
+    "hardhat-gas-reporter": {
+      "name": "hardhat-gas-reporter",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/abi",
+        "glob",
+        "hardhat"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/hardhat-gas-reporter"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244623,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has potential denial of service via globparts amplification",
+          "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-405"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=7.0.0 <11.0.1"
+        }
+      ],
+      "effects": [
+        "glob",
+        "mocha"
+      ],
+      "range": "7.0.0 - 11.0.0",
+      "nodes": [
+        "node_modules/minimatch"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "mocha": {
+      "name": "mocha",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "diff",
+        "glob",
+        "minimatch"
+      ],
+      "effects": [],
+      "range": "11.0.0-beta || >=11.0.1",
+      "nodes": [
+        "node_modules/mocha"
+      ],
+      "fixAvailable": true
+    },
+    "number-to-bn": {
+      "name": "number-to-bn",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "bn.js"
+      ],
+      "effects": [
+        "ethjs-unit",
+        "web3-utils"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/number-to-bn"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "secp256k1": {
+      "name": "secp256k1",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "elliptic"
+      ],
+      "effects": [
+        "ethereum-cryptography"
+      ],
+      "range": ">=2.0.0",
+      "nodes": [
+        "node_modules/secp256k1"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "solidity-coverage": {
+      "name": "solidity-coverage",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "hardhat",
+        "web3-utils"
+      ],
+      "effects": [
+        "@nomicfoundation/hardhat-toolbox-viem"
+      ],
+      "range": ">=0.7.0-beta.0",
+      "nodes": [
+        "node_modules/solidity-coverage"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    },
+    "web3-utils": {
+      "name": "web3-utils",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "ethjs-unit",
+        "number-to-bn"
+      ],
+      "effects": [
+        "solidity-coverage"
+      ],
+      "range": "1.0.0-beta.8 - 3.0.0-rc.5",
+      "nodes": [
+        "node_modules/web3-utils"
+      ],
+      "fixAvailable": {
+        "name": "@nomicfoundation/hardhat-toolbox-viem",
+        "version": "5.0.7",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 19,
+      "moderate": 10,
+      "high": 0,
+      "critical": 0,
+      "total": 29
+    },
+    "dependencies": {
+      "prod": 72,
+      "dev": 572,
+      "optional": 73,
+      "peer": 305,
+      "peerOptional": 0,
+      "total": 680
+    }
+  }
+}

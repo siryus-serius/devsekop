@@ -202,8 +202,12 @@ Setiap *push* dan *pull request* ke `main` menjalankan job paralel berikut. Pipe
 | SAST kontrak | Slither | Temuan ≥ medium |
 | SAST aplikasi | Semgrep (OWASP Top 10) | Temuan severity ERROR |
 | SCA | `npm audit`, dependency review | Kerentanan ≥ high |
-| Secrets | Gitleaks | Secret terdeteksi |
+| Secrets | Gitleaks (seluruh riwayat) | Secret terdeteksi |
+| Container | Docker build + Trivy image, lalu push ke GHCR | CVE HIGH/CRITICAL yang sudah ada perbaikannya |
+| IaC | Checkov (Dockerfile + GitHub Actions) | Ada pemeriksaan yang gagal |
 | **Security gate** | — | Salah satu job di atas gagal |
+
+Image hanya di-push ke registry **setelah** lolos scan Trivy.
 
 ---
 
