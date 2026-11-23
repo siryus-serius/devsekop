@@ -18,11 +18,8 @@ export async function SiteHeader() {
         </Link>
         {user ? (
           <>
-            <Link href="/vault" className="text-slate-600 hover:text-brand-700">
-              Vault Saya
-            </Link>
             <Link href="/issuer" className="text-slate-600 hover:text-brand-700">
-              Issuer
+              Dasbor
             </Link>
             <form action="/auth/signout" method="post">
               <button className="text-slate-600 hover:text-red-700">Keluar</button>

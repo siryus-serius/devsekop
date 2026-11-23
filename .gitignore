@@ -39,6 +39,10 @@ Thumbs.db
 !.vscode/extensions.json
 .idea/
 
+# Konfigurasi tool lokal
+.claude/
+CLAUDE.md
+
 # Log
 npm-debug.log*
 *.log

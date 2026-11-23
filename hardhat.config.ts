@@ -22,10 +22,12 @@ const config: HardhatUserConfig = {
   },
   networks: {
     localhost: { url: "http://127.0.0.1:8545" },
-    ...(process.env.SEPOLIA_RPC_URL
+    // Testnet untuk demo: Base Sepolia (L2, gas murah). Faucet: https://docs.base.org/tools/network-faucets
+    ...(process.env.BASE_SEPOLIA_RPC_URL
       ? {
-          sepolia: {
-            url: process.env.SEPOLIA_RPC_URL,
+          baseSepolia: {
+            url: process.env.BASE_SEPOLIA_RPC_URL,
+            chainId: 84532,
             accounts: deployerKey ? [deployerKey] : [],
           },
         }

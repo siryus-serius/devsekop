@@ -2,126 +2,136 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
 import { keccak256, sha256, toBytes, zeroHash } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 
-const STATUS = { None: 0, Valid: 1, Revoked: 2 } as const;
+const STATUS = { NotFound: 0, Valid: 1, Revoked: 2 } as const;
 
 describe("DiplomaRegistry", () => {
   async function deployFixture() {
-    const [admin, approverA, approverB, approverC, outsider] = await hre.viem.getWalletClients();
-    const kms = privateKeyToAccount(generatePrivateKey());
-
+    const [admin, issuer, outsider] = await hre.viem.getWalletClients();
     const registry = await hre.viem.deployContract("DiplomaRegistry", [
       admin!.account.address,
-      [approverA!.account.address, approverB!.account.address, approverC!.account.address],
-      2,
-      kms.address,
+      issuer!.account.address,
     ]);
+    const as = (wallet: typeof admin) =>
+      hre.viem.getContractAt("DiplomaRegistry", registry.address, { client: { wallet: wallet! } });
 
-    const asA = await hre.viem.getContractAt("DiplomaRegistry", registry.address, { client: { wallet: approverA! } });
-    const asB = await hre.viem.getContractAt("DiplomaRegistry", registry.address, { client: { wallet: approverB! } });
-    const asOutsider = await hre.viem.getContractAt("DiplomaRegistry", registry.address, {
-      client: { wallet: outsider! },
-    });
-
-    const serialKey = keccak256(toBytes("UNIV-2026-000001"));
-    const docHash = sha256(toBytes("isi pdf ijazah"));
-    const sign = async (s = serialKey, h = docHash, signer = kms) => {
-      const digest = await registry.read.issuanceDigest([s, h]);
-      return signer.signMessage({ message: { raw: digest } });
+    return {
+      registry,
+      asAdmin: await as(admin),
+      asIssuer: await as(issuer),
+      asOutsider: await as(outsider),
+      issuer: issuer!.account.address,
+      serialKey: keccak256(toBytes("UNIV-2026-000001")),
+      docHash: sha256(toBytes("isi pdf ijazah")),
     };
-
-    return { registry, asA, asB, asOutsider, kms, serialKey, docHash, sign };
   }
 
-  it("menerbitkan ijazah hanya setelah ambang multi-sig tercapai", async () => {
-    const { registry, asA, asB, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await asA.write.proposeIssue([serialKey, docHash, await sign()]);
+  describe("Penerbitan", () => {
+    it("issuer dapat menerbitkan dan ijazah bisa dicek lewat serial maupun hash", async () => {
+      const { registry, asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
 
-    let [status] = await registry.read.getBySerial([serialKey]);
-    expect(status).to.equal(STATUS.None);
+      const [status, diploma] = await registry.read.getBySerial([serialKey]);
+      expect(status).to.equal(STATUS.Valid);
+      expect(diploma.docHash).to.equal(docHash);
 
-    await asB.write.approve([1n]);
-    [status] = await registry.read.getBySerial([serialKey]);
-    expect(status).to.equal(STATUS.Valid);
+      const [byHashStatus, byHashSerial] = await registry.read.getByHash([docHash]);
+      expect(byHashStatus).to.equal(STATUS.Valid);
+      expect(byHashSerial).to.equal(serialKey);
+    });
 
-    const [byHashStatus, byHashSerial, diploma] = await registry.read.getByHash([docHash]);
-    expect(byHashStatus).to.equal(STATUS.Valid);
-    expect(byHashSerial).to.equal(serialKey);
-    expect(diploma.docHash).to.equal(docHash);
+    it("memancarkan event DiplomaIssued", async () => {
+      const { registry, asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      const events = await registry.getEvents.DiplomaIssued();
+      expect(events).to.have.lengthOf(1);
+      expect(events[0]!.args.serialKey).to.equal(serialKey);
+    });
+
+    it("menolak akun yang bukan issuer", async () => {
+      const { asOutsider, serialKey, docHash } = await loadFixture(deployFixture);
+      await expect(asOutsider.write.issue([serialKey, docHash])).to.be.rejectedWith(
+        "AccessControlUnauthorizedAccount",
+      );
+    });
+
+    it("menolak nilai kosong", async () => {
+      const { asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await expect(asIssuer.write.issue([zeroHash, docHash])).to.be.rejectedWith("ZeroValue");
+      await expect(asIssuer.write.issue([serialKey, zeroHash])).to.be.rejectedWith("ZeroValue");
+    });
+
+    it("menolak nomor seri ganda", async () => {
+      const { asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      const otherHash = sha256(toBytes("pdf lain"));
+      await expect(asIssuer.write.issue([serialKey, otherHash])).to.be.rejectedWith("AlreadyIssued");
+    });
+
+    it("menolak file PDF yang sama didaftarkan dua kali", async () => {
+      const { asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      const otherSerial = keccak256(toBytes("UNIV-2026-000002"));
+      await expect(asIssuer.write.issue([otherSerial, docHash])).to.be.rejectedWith("HashAlreadyRegistered");
+    });
   });
 
-  it("menolak tanda tangan yang bukan dari kunci KMS issuer", async () => {
-    const { asA, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    const rogue = privateKeyToAccount(generatePrivateKey());
-    await expect(asA.write.proposeIssue([serialKey, docHash, await sign(serialKey, docHash, rogue)])).to.be.rejectedWith(
-      "InvalidSignature",
-    );
+  describe("Verifikasi", () => {
+    it("PDF yang diubah menghasilkan status NotFound", async () => {
+      const { registry, asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      const [status, serial] = await registry.read.getByHash([sha256(toBytes("isi pdf ijazah (diedit)"))]);
+      expect(status).to.equal(STATUS.NotFound);
+      expect(serial).to.equal(zeroHash);
+    });
   });
 
-  it("menolak tanda tangan yang diputar ulang untuk dokumen lain", async () => {
-    const { asA, serialKey, sign } = await loadFixture(deployFixture);
-    const otherHash = sha256(toBytes("dokumen palsu"));
-    await expect(asA.write.proposeIssue([serialKey, otherHash, await sign()])).to.be.rejectedWith("InvalidSignature");
+  describe("Pencabutan", () => {
+    it("issuer dapat mencabut, dan catatan terbit tetap tersimpan", async () => {
+      const { registry, asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      await asIssuer.write.revoke([serialKey]);
+
+      const [status, , diploma] = await registry.read.getByHash([docHash]);
+      expect(status).to.equal(STATUS.Revoked);
+      expect(diploma.issuedAt > 0n).to.equal(true);
+      expect(diploma.revokedAt > 0n).to.equal(true);
+    });
+
+    it("menolak mencabut ijazah yang belum terbit", async () => {
+      const { asIssuer, serialKey } = await loadFixture(deployFixture);
+      await expect(asIssuer.write.revoke([serialKey])).to.be.rejectedWith("NotIssued");
+    });
+
+    it("menolak mencabut dua kali", async () => {
+      const { asIssuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      await asIssuer.write.revoke([serialKey]);
+      await expect(asIssuer.write.revoke([serialKey])).to.be.rejectedWith("AlreadyRevoked");
+    });
+
+    it("menolak akun yang bukan issuer", async () => {
+      const { asIssuer, asOutsider, serialKey, docHash } = await loadFixture(deployFixture);
+      await asIssuer.write.issue([serialKey, docHash]);
+      await expect(asOutsider.write.revoke([serialKey])).to.be.rejectedWith("AccessControlUnauthorizedAccount");
+    });
   });
 
-  it("menolak pengusul yang bukan approver", async () => {
-    const { asOutsider, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await expect(asOutsider.write.proposeIssue([serialKey, docHash, await sign()])).to.be.rejectedWith(
-      "AccessControlUnauthorizedAccount",
-    );
-  });
+  describe("Respon insiden", () => {
+    it("admin dapat mencabut peran issuer sehingga kunci yang bocor tidak bisa dipakai", async () => {
+      const { registry, asAdmin, asIssuer, issuer, serialKey, docHash } = await loadFixture(deployFixture);
+      await asAdmin.write.revokeRole([await registry.read.ISSUER_ROLE(), issuer]);
+      await expect(asIssuer.write.issue([serialKey, docHash])).to.be.rejectedWith(
+        "AccessControlUnauthorizedAccount",
+      );
+    });
 
-  it("mencegah approver yang sama menyetujui dua kali", async () => {
-    const { asA, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await asA.write.proposeIssue([serialKey, docHash, await sign()]);
-    await expect(asA.write.approve([1n])).to.be.rejectedWith("AlreadyApproved");
-  });
-
-  it("menolak nomor seri atau hash yang sudah terdaftar", async () => {
-    const { asA, asB, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await asA.write.proposeIssue([serialKey, docHash, await sign()]);
-    await asB.write.approve([1n]);
-
-    await expect(asA.write.proposeIssue([serialKey, docHash, await sign()])).to.be.rejectedWith("AlreadyIssued");
-
-    const otherSerial = keccak256(toBytes("UNIV-2026-000002"));
-    await expect(asA.write.proposeIssue([otherSerial, docHash, await sign(otherSerial)])).to.be.rejectedWith(
-      "HashAlreadyRegistered",
-    );
-  });
-
-  it("mencabut ijazah melalui multi-sig", async () => {
-    const { registry, asA, asB, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await asA.write.proposeIssue([serialKey, docHash, await sign()]);
-    await asB.write.approve([1n]);
-
-    await asA.write.proposeRevoke([serialKey]);
-    await asB.write.approve([2n]);
-
-    const [status, , diploma] = await registry.read.getByHash([docHash]);
-    expect(status).to.equal(STATUS.Revoked);
-    expect(diploma.revoked).to.equal(true);
-  });
-
-  it("mengembalikan status None untuk hash yang tidak dikenal (dokumen dipalsukan)", async () => {
-    const { registry } = await loadFixture(deployFixture);
-    const [status, serial] = await registry.read.getByHash([sha256(toBytes("pdf yang diubah"))]);
-    expect(status).to.equal(STATUS.None);
-    expect(serial).to.equal(zeroHash);
-  });
-
-  it("menolak persetujuan untuk proposal kedaluwarsa", async () => {
-    const { asA, asB, serialKey, docHash, sign } = await loadFixture(deployFixture);
-    await asA.write.proposeIssue([serialKey, docHash, await sign()]);
-    const testClient = await hre.viem.getTestClient();
-    await testClient.increaseTime({ seconds: 8 * 24 * 60 * 60 });
-    await testClient.mine({ blocks: 1 });
-    await expect(asB.write.approve([1n])).to.be.rejectedWith("ProposalExpired");
-  });
-
-  it("tidak mengizinkan threshold lebih besar dari jumlah approver", async () => {
-    const { registry } = await loadFixture(deployFixture);
-    await expect(registry.write.setThreshold([4])).to.be.rejectedWith("InvalidThreshold");
+    it("issuer tidak bisa memberi peran ke akun lain", async () => {
+      const { registry, asIssuer, asOutsider } = await loadFixture(deployFixture);
+      const outsider = asOutsider.address;
+      await expect(asIssuer.write.grantRole([await registry.read.ISSUER_ROLE(), outsider])).to.be.rejectedWith(
+        "AccessControlUnauthorizedAccount",
+      );
+    });
   });
 });

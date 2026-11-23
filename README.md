@@ -1,350 +1,209 @@
 # 🎓 Vault Ijazah Digital Berbasis Blockchain
 
 > **Aplikasi Vault Dokumen dan Sertifikat Digital Berbasis Web (Ijazah Digital Berbasis Blockchain)**
-> Platform penerbitan, penyimpanan, dan verifikasi ijazah digital yang aman dengan arsitektur hybrid *on-chain/off-chain* dan pendekatan DevSecOps.
+> Penerbitan dan verifikasi ijazah dengan arsitektur hybrid *on-chain/off-chain* dan pipeline DevSecOps.
+
+Kampus mengunggah PDF ijazah, sistem mencatat **sidik jari SHA-256**-nya di blockchain, dan siapa pun bisa mengecek keasliannya tanpa login. Perubahan sekecil apa pun pada file PDF akan terdeteksi.
+
+> Seluruh data ijazah di proyek ini **fiktif** dan hanya untuk demonstrasi.
 
 ---
 
-## 📌 Daftar Isi
+## 👥 Peran
 
-1. [Gambaran Umum](#-gambaran-umum)
-2. [Arsitektur Sistem](#-arsitektur-sistem)
-3. [Tech Stack](#-tech-stack)
-4. [Fitur Utama](#-fitur-utama)
-5. [Alur Kerja (Dual-Flow)](#-alur-kerja-dual-flow)
-6. [Struktur Direktori](#-struktur-direktori)
-7. [Keamanan & DevSecOps](#-keamanan--devsecops)
-8. [Instalasi & Menjalankan Proyek](#-instalasi--menjalankan-proyek)
-9. [Variabel Lingkungan](#-variabel-lingkungan)
-10. [Pipeline CI/CD](#-pipeline-cicd)
-11. [Kontribusi](#-kontribusi)
-12. [Lisensi](#-lisensi)
+| Peran | Siapa | Hak | Akses |
+|---|---|---|---|
+| **Admin** | Pejabat kampus | Menerbitkan, **mencabut**, membaca audit log | Login + MFA |
+| **Issuer** | Staf akademik | Menerbitkan, mengunduh PDF | Login + MFA |
+| **Verifier** | Publik / HRD | Memverifikasi ijazah | Tanpa login (rate limited) |
+
+Akun baru **tidak punya peran** sampai admin memberikannya (*deny by default*).
 
 ---
 
-## 🧭 Gambaran Umum
-
-Pemalsuan ijazah adalah masalah serius dalam proses rekrutmen dan penerimaan akademik. Verifikasi manual ke institusi penerbit lambat, mahal, dan rawan kesalahan.
-
-**Vault Ijazah Digital** menyelesaikan masalah ini dengan:
-
-- **Integritas yang tidak dapat diubah** — sidik jari kriptografis (SHA-256) setiap ijazah dicatat secara permanen di *blockchain*.
-- **Privasi data** — dokumen fisik dan data pribadi (PII) disimpan terenkripsi AES-256 di luar rantai (*off-chain*); **tidak ada PII yang disimpan on-chain**.
-- **Verifikasi instan tanpa login** — pemberi kerja atau pihak ketiga cukup mengunggah PDF atau memindai kode QR.
-- **Kepemilikan oleh pemegang ijazah** — mahasiswa/alumni memiliki *vault* pribadi untuk mengelola dan membagikan ijazahnya.
-
-### Pemangku Kepentingan
-
-| Peran | Deskripsi | Akses |
-|---|---|---|
-| **Issuer** (Universitas) | Menerbitkan dan mencabut ijazah | Login + MFA, peran `issuer` |
-| **Holder** (Mahasiswa/Alumni) | Melihat, mengunduh, dan membagikan ijazah | Login + MFA, peran `holder` |
-| **Verifier** (Publik/Pemberi Kerja) | Memverifikasi keaslian ijazah | Publik, tanpa login (dibatasi *rate limit*) |
-| **Admin** | Mengelola akun issuer dan konfigurasi sistem | Login + MFA, peran `admin` |
-
----
-
-## 🏗️ Arsitektur Sistem
-
-Sistem menggunakan **arsitektur hybrid on-chain/off-chain**:
+## 🏗️ Arsitektur
 
 ```
-                ┌───────────────────────────────────────────┐
-                │        Pengguna (Browser / Mobile)        │
-                └──────────────────────┬────────────────────┘
-                                       │ HTTPS / TLS 1.2+
-                ┌──────────────────────▼────────────────────┐
-                │  DMZ / API Gateway (WAF, CORS, Rate Limit)│
-                └──────────────────────┬────────────────────┘
-                                       │
-                ┌──────────────────────▼────────────────────┐
-                │      Next.js (SSR + API Routes)           │
-                │  Middleware: JWT, RBAC, Security Headers  │
-                └───────┬──────────────┬──────────────┬─────┘
-                        │              │              │
-         ┌──────────────▼───┐  ┌───────▼───────┐  ┌───▼────────────────┐
-         │    Supabase      │  │  HSM / KMS    │  │  Blockchain (EVM)  │
-         │ ─ PostgreSQL+RLS │  │  (Simulasi)   │  │ ─ DiplomaRegistry  │
-         │ ─ Auth (JWT+MFA) │  │ ─ Kunci issuer│  │ ─ Multi-Signature  │
-         │ ─ Storage (PDF   │  │ ─ Wrap kunci  │  │ ─ Hash, serial,    │
-         │   terenkripsi    │  │   data (DEK)  │  │   tanda tangan,    │
-         │   AES-256-GCM)   │  │               │  │   timestamp        │
-         └──────────────────┘  └───────────────┘  └────────────────────┘
-              OFF-CHAIN                                 ON-CHAIN
-       (data pribadi & dokumen)                  (bukti integritas saja)
+ Verifier ──┐                                   ┌──► Supabase (off-chain)
+            ├──► Vercel ──► Next.js (UI + API) ─┤      ├─ Auth + MFA
+ Staf ──────┘    Firewall    Middleware: CSP,   │      ├─ Postgres + RLS (metadata, audit_logs)
+                             sesi, MFA, CSRF    │      └─ Storage privat (PDF)
+                                                │
+                                                └──► Blockchain EVM (on-chain)
+                                                       └─ DiplomaRegistry: hash + status
 ```
 
-### Pemisahan Data
+### Apa disimpan di mana
 
-| Data | Lokasi | Keterangan |
+| Data | Lokasi | Alasan |
 |---|---|---|
-| File PDF ijazah | Supabase Storage (privat) | Terenkripsi AES-256-GCM per file (*envelope encryption*) |
-| Data pribadi (nama, NIK, IPK, dll.) | Supabase PostgreSQL | Dilindungi RLS; kolom sensitif dienkripsi |
-| Hash SHA-256 dokumen | Blockchain | Bukti integritas, tidak dapat diubah |
-| Nomor seri ijazah | Blockchain | Pengenal publik non-PII |
-| Tanda tangan digital issuer | Blockchain | Dihasilkan via HSM/KMS |
-| Timestamp & status (aktif/dicabut) | Blockchain | Mendukung pencabutan (*revocation*) |
+| File PDF ijazah | Supabase Storage, bucket **privat** | Hanya server yang bisa akses; unduhan via signed URL 60 detik |
+| Nama, NIM, prodi, tanggal lulus | Supabase Postgres + RLS | Hanya staf yang sudah MFA yang bisa membaca |
+| Audit log & kejadian keamanan | Supabase Postgres (`audit_logs`) | Jejak audit, sumber data monitoring |
+| Hash SHA-256 PDF | Blockchain | Bukti integritas yang tidak bisa diubah |
+| `keccak256(nomor seri)` | Blockchain | Kunci pencarian, bukan data pribadi |
+| Waktu terbit / cabut | Blockchain | Status VALID / DICABUT |
 
-> ⚠️ **Prinsip utama:** data pribadi **tidak pernah** ditulis ke blockchain.
+> ⚠️ **Data pribadi tidak pernah ditulis ke blockchain.**
 
 ---
 
-## 🧰 Tech Stack
+## 🔄 Alur
 
-| Lapisan | Teknologi |
+**Penerbitan** (`POST /api/issuer/diplomas`)
+
+```
+Validasi PDF (magic bytes, ukuran, fitur aktif berbahaya)
+  → hitung SHA-256
+  → simpan PDF ke bucket privat
+  → issue(serialKey, docHash) di blockchain
+  → simpan metadata + tx hash
+  → tampilkan QR ke /verify/<nomor-seri>
+```
+
+**Verifikasi** (`/verify`, tanpa login)
+
+```
+Unggah PDF → hash dihitung DI BROWSER (file tidak dikirim)
+  → getByHash() di blockchain (gratis, read-only)
+  → VALID / DICABUT / TIDAK DITEMUKAN
+```
+
+Atau scan QR → `/verify/<nomor-seri>` → `getBySerial()`.
+
+**Pencabutan** (`POST /api/issuer/diplomas/:id/revoke`, khusus admin): status on-chain menjadi DICABUT, catatan terbit tetap ada.
+
+---
+
+## ⛓️ Smart Contract
+
+`contracts/DiplomaRegistry.sol` (OpenZeppelin `AccessControl`)
+
+| Fungsi | Siapa | Keterangan |
+|---|---|---|
+| `issue(serialKey, docHash)` | `ISSUER_ROLE` | Tolak nilai kosong, serial ganda, hash ganda |
+| `revoke(serialKey)` | `ISSUER_ROLE` | Tolak bila belum terbit / sudah dicabut |
+| `getBySerial`, `getByHash` | Publik | `view`, tanpa gas |
+| `grantRole`, `revokeRole` | `DEFAULT_ADMIN_ROLE` | Rotasi dompet relayer |
+
+| Peran on-chain | Dipegang oleh |
 |---|---|
-| Frontend & Framework | Next.js (App Router, SSR, SEO untuk halaman verifikasi publik) |
-| Styling / UI | Tailwind CSS |
-| Backend & Database | Supabase (PostgreSQL, Auth, Row Level Security) |
-| Penyimpanan Off-Chain | Supabase Storage + enkripsi AES-256-GCM di sisi aplikasi |
-| Smart Contract | Solidity, OpenZeppelin |
-| Lingkungan Pengembangan Kontrak | Hardhat |
-| Integrasi Web3 | Viem |
-| Manajemen Kunci | Simulasi HSM/KMS (dapat diganti AWS KMS / GCP KMS / HashiCorp Vault) |
-| CI/CD & Keamanan | GitHub Actions, Slither, Mythril, npm audit / SCA, secret scanning |
+| `DEFAULT_ADMIN_ROLE` | Dompet admin kampus (MetaMask) |
+| `ISSUER_ROLE` | Dompet server (relayer) yang membayar gas |
 
----
-
-## ✨ Fitur Utama
-
-### 1. Penerbitan Ijazah (Issuer)
-- Unggah PDF ijazah (tunggal atau batch).
-- Validasi format (*magic bytes*, ukuran, tipe MIME) dan pemindaian malware.
-- Perhitungan hash SHA-256 dan enkripsi AES-256-GCM.
-- Penandatanganan payload menggunakan simulasi HSM/KMS.
-- *Minting* ke smart contract dengan persetujuan multi-signature.
-- Pencabutan (*revocation*) ijazah yang bermasalah.
-
-### 2. Verifikasi Publik (Verifier)
-- Unggah PDF **atau** pindai kode QR / buka tautan verifikasi.
-- Hash dihitung ulang dan dibandingkan dengan data on-chain.
-- Hasil instan: ✅ **Asli & Valid**, ⛔ **Dicabut**, atau ❌ **Tidak Ditemukan / Dipalsukan**.
-- Tanpa login; dilindungi *rate limiting* dan aturan WAF.
-- Halaman verifikasi dirender di server (SSR) dan ramah SEO.
-
-### 3. Vault Pribadi (Holder)
-- Login aman via Supabase Auth dengan MFA (TOTP/FIDO2).
-- Melihat daftar ijazah milik sendiri.
-- Mengunduh PDF secara aman (didekripsi di server, tautan berumur pendek).
-- Membuat tautan verifikasi dan kode QR yang dapat dibagikan, dengan masa berlaku yang dapat diatur dan dapat dicabut.
-
----
-
-## 🔄 Alur Kerja (Dual-Flow)
-
-### A. Alur Penerbitan (Issuance / Minting)
-
-```
-Issuer unggah PDF
-   │
-   ▼
-Validasi format + pemindaian malware
-   │
-   ▼
-Hitung hash SHA-256 dari PDF final
-   │
-   ▼
-Enkripsi PDF (AES-256-GCM) ──► Simpan di Supabase Storage (off-chain)
-   │
-   ▼
-Tanda tangani payload {hash, serial, timestamp} via HSM/KMS
-   │
-   ▼
-Usulan mint ──► Persetujuan multi-sig ──► Catat on-chain
-   │
-   ▼
-Simpan metadata + tx hash di PostgreSQL (dengan RLS)
-```
-
-> 💡 **Catatan penting:** hash dihitung dari **PDF final** (termasuk kode QR/nomor seri yang tertanam). Setiap modifikasi setelah hashing akan membuat verifikasi gagal.
-
-### B. Alur Verifikasi Publik
-
-```
-Verifier unggah PDF / pindai QR
-   │
-   ▼
-Hitung ulang hash SHA-256 (atau ambil serial dari QR)
-   │
-   ▼
-Baca data dari smart contract (read-only)
-   │
-   ▼
-Bandingkan hash + cek status + validasi tanda tangan issuer
-   │
-   ▼
-Hasil: VALID / DICABUT / TIDAK VALID
-```
+**Respon insiden:** jika kunci relayer bocor, admin mencabut `ISSUER_ROLE` dari alamat lama dan memberikannya ke relayer baru. Skenario ini diuji di unit test.
 
 ---
 
 ## 📁 Struktur Direktori
 
 ```
-/
-├── .github/
-│   ├── workflows/devsecops.yml # CI: typecheck, build, test, Slither, Mythril, CodeQL, SCA, Gitleaks
-│   └── dependabot.yml          # Pembaruan dependensi otomatis
-├── contracts/
-│   └── DiplomaRegistry.sol     # Registri ijazah + multi-sig M-of-N + verifikasi tanda tangan KMS
+├── .github/workflows/devsecops.yml  # CI: test, Slither, Semgrep, npm audit, Gitleaks, security gate
+├── contracts/DiplomaRegistry.sol
+├── test/DiplomaRegistry.ts          # 13 unit test kontrak
 ├── scripts/
-│   ├── deploy.ts               # Deploy kontrak (lokal / Sepolia)
-│   ├── approve.ts              # Persetujuan approver kedua (multi-sig)
-│   ├── export-abi.mjs          # Ekspor ABI → src/lib/chain/abi.ts
-│   └── generate-keys.mjs       # Material kunci untuk pengembangan lokal
-├── test/
-│   └── DiplomaRegistry.ts      # Unit test kontrak (10 skenario)
-├── supabase/
-│   ├── migrations/             # Skema, RBAC, RLS, bucket privat
-│   └── seed.sql
-├── src/
-│   ├── app/
-│   │   ├── verify/             # Verifikasi publik (SEO) + /verify/[serial] (SSR)
-│   │   ├── share/[token]/      # Tautan berbagi dari pemegang ijazah
-│   │   ├── login/, mfa/        # Autentikasi + MFA TOTP wajib
-│   │   ├── vault/              # Vault pemegang ijazah
-│   │   ├── issuer/             # Dasbor issuer
-│   │   └── api/
-│   │       ├── verify/                        # POST — verifikasi publik (rate limited)
-│   │       ├── issuer/diplomas/               # POST — penerbitan
-│   │       ├── issuer/diplomas/[id]/sync      # POST — sinkron status on-chain
-│   │       ├── issuer/diplomas/[id]/revoke    # POST — usulan pencabutan
-│   │       ├── vault/diplomas/[id]/download   # GET  — unduh terdekripsi
-│   │       └── vault/share/                   # POST — tautan + QR code
-│   ├── components/             # Komponen UI (Tailwind CSS)
-│   ├── lib/
-│   │   ├── supabase/           # Klien server / browser / admin (service role)
-│   │   ├── crypto/             # SHA-256, HMAC, AES-256-GCM
-│   │   ├── kms/                # Antarmuka KMS + simulasi HSM
-│   │   ├── chain/              # Klien Viem, ABI, verifikasi & proposal
-│   │   ├── security/           # Rate limit, validasi PDF, ClamAV
-│   │   ├── auth/guards.ts      # requireRole: JWT + AAL2 + peran dari DB
-│   │   ├── audit.ts            # Jejak audit
-│   │   └── env.ts              # Validasi environment (Zod)
-│   └── middleware.ts           # CSP nonce, sesi, gate MFA, CORS/CSRF
-├── docs/threat-model.md        # STRIDE & OWASP Top 10 ↔ kontrol
-├── .env.example
-├── hardhat.config.ts, next.config.ts, tsconfig*.json
-├── slither.config.json, mythril.solc.json
-└── README.md
+│   ├── deploy.ts                    # deploy lokal / Base Sepolia
+│   ├── export-abi.mjs               # ABI → src/lib/chain/abi.ts
+│   └── generate-keys.mjs            # kunci relayer untuk dev/testnet
+├── supabase/migrations/             # tabel, RLS, bucket privat
+├── docs/threat-model.md             # STRIDE + OWASP Top 10
+└── src/
+    ├── middleware.ts                # CSP nonce, sesi, gate MFA, CSRF
+    ├── app/
+    │   ├── page.tsx                 # beranda
+    │   ├── login/, mfa/             # autentikasi + MFA TOTP
+    │   ├── issuer/                  # dasbor kampus (terbit, cabut, unduh)
+    │   ├── verify/, verify/[serial] # verifikasi publik
+    │   └── api/
+    │       ├── issuer/diplomas/                 # POST terbitkan
+    │       ├── issuer/diplomas/[id]/revoke      # POST cabut (admin)
+    │       ├── issuer/diplomas/[id]/download    # GET unduh PDF
+    │       └── verify/                          # POST verifikasi (rate limited)
+    ├── components/
+    └── lib/
+        ├── auth/guards.ts           # requireRole: JWT + MFA + peran dari DB
+        ├── chain/                   # Viem client, ABI
+        ├── security/                # rate limit, validasi PDF
+        ├── audit.ts                 # audit log (DB + JSON stdout)
+        └── env.ts                   # validasi env (Zod)
 ```
 
 ---
 
-## 🔐 Keamanan & DevSecOps
+## 🚀 Menjalankan Secara Lokal
 
-### Persyaratan Keamanan
-
-| Kode | Persyaratan | Implementasi | STRIDE | OWASP Top 10 |
-|---|---|---|---|---|
-| **REQ-01** | HTTPS/TLS 1.2+ wajib | HSTS, redirect HTTPS, TLS di gateway/hosting | Information Disclosure, Tampering | A02 Cryptographic Failures |
-| **REQ-02** | Isolasi penyimpanan off-chain + AES-256, tanpa PII on-chain | Envelope encryption AES-256-GCM, bucket privat, hanya hash on-chain | Information Disclosure | A02, A04 Insecure Design |
-| **REQ-03** | Autentikasi stateless JWT + MFA | Supabase Auth, TOTP/FIDO2, verifikasi AAL2 di middleware | Spoofing | A07 Identification & Authentication Failures |
-| **REQ-04** | Proteksi kunci privat issuer | Simulasi HSM/KMS (kunci tidak pernah keluar modul), kontrak multi-signature | Spoofing, Elevation of Privilege | A02, A04 |
-| **REQ-05** | Mesin verifikasi publik read-only dengan Rate Limit & WAF | Rate limiting per IP, batas ukuran upload, aturan WAF, endpoint read-only | Denial of Service | A04, A05 Security Misconfiguration |
-| **REQ-06** | RBAC ketat | Kebijakan RLS Supabase + pemeriksaan peran di middleware & API | Elevation of Privilege | A01 Broken Access Control |
-
-### Kontrol Tambahan
-- **Security headers:** CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
-- **Validasi input:** skema validasi untuk semua input API; validasi *magic bytes* PDF.
-- **Audit log:** setiap penerbitan, pencabutan, dan unduhan dicatat (*Repudiation*).
-- **Manajemen secret:** tidak ada secret di repositori; gunakan secret manager / GitHub Secrets.
-- **Least privilege:** *service role key* Supabase hanya digunakan di server.
-
----
-
-## 🚀 Instalasi & Menjalankan Proyek
-
-### Prasyarat
-- Node.js ≥ 20.9 (diuji dengan Node 24)
-- Supabase CLI + Docker (untuk Supabase lokal) atau proyek Supabase cloud
-- Python 3 (opsional, untuk menjalankan Slither/Mythril secara lokal)
-
-### Langkah
+Prasyarat: Node.js ≥ 20.9, Supabase CLI + Docker.
 
 ```bash
-# 1. Instal dependensi
 npm install
-
-# 2. Siapkan environment
 cp .env.example .env.local
-npm run keys:generate          # salin outputnya ke .env.local
+npm run keys:generate            # salin ISSUER_RELAYER_PRIVATE_KEY ke .env.local
 
-# 3. Supabase (lokal) — salin anon key & service role key dari output `status` ke .env.local
-npx supabase init              # sekali saja
-npx supabase start
-npx supabase db reset          # menjalankan migrasi + seed.sql
-#    Wajib: aktifkan konfirmasi email & MFA TOTP di pengaturan Auth
+npx supabase start               # salin anon key & service role key ke .env.local
+npx supabase db reset            # migrasi + seed
+#   Aktifkan MFA TOTP di pengaturan Auth
 
-# 4. Blockchain lokal (terminal terpisah)
-npm run chain:node
-npm run chain:deploy:local     # salin DIPLOMA_REGISTRY_ADDRESS ke .env.local
+npm run chain:node               # terminal terpisah
+npm run chain:deploy:local       # salin DIPLOMA_REGISTRY_ADDRESS ke .env.local
 
-# 5. Jalankan aplikasi
-npm run dev                    # http://localhost:3000
+npm run dev                      # http://localhost:3000
 ```
 
-### Menjadikan pengguna sebagai issuer
+Beri peran ke akun staf (setelah mendaftar di `/login`):
 
 ```sql
-update public.profiles
-set role = 'issuer',
-    institution_id = (select id from public.institutions where code = 'UNIV-DEMO')
-where email = 'issuer@contoh.ac.id';
+update public.profiles set role = 'admin'  where email = 'admin@kampus-demo.ac.id';
+update public.profiles set role = 'issuer' where email = 'issuer@kampus-demo.ac.id';
 ```
 
-### Persetujuan multi-sig
-
-Penerbitan dari dasbor issuer otomatis menjadi persetujuan pertama (relayer server).
-Dengan `MULTISIG_THRESHOLD=2`, approver kedua harus menyetujui:
+### Deploy kontrak ke testnet (Base Sepolia)
 
 ```bash
-PROPOSAL_ID=1 npm run chain:approve -- --network localhost
+# isi BASE_SEPOLIA_RPC_URL, DEPLOYER_PRIVATE_KEY, ISSUER_RELAYER_PRIVATE_KEY di .env.local
+# isi saldo deployer + relayer dari faucet Base Sepolia
+npm run chain:deploy:testnet
+# lalu set RPC_URL=https://sepolia.base.org, CHAIN_ID=84532, DIPLOMA_REGISTRY_ADDRESS=<hasil>
 ```
-
-Lalu klik **Sinkron status** di dasbor issuer.
 
 ### Perintah lain
 
 | Perintah | Fungsi |
 |---|---|
 | `npm run contracts:test` | Unit test smart contract |
-| `npm run contracts:abi` | Kompilasi & ekspor ulang ABI ke `src/lib/chain/abi.ts` |
+| `npm run contracts:abi` | Kompilasi & ekspor ulang ABI |
 | `npm run typecheck` | Type check aplikasi + kode Hardhat |
-| `npm run audit:deps` | Pemindaian kerentanan dependensi produksi |
+| `npm run audit:deps` | Pemindaian kerentanan dependensi |
 
 ---
 
 ## ⚙️ Variabel Lingkungan
 
-Lihat `.env.example`. Ringkasan:
-
 | Variabel | Keterangan |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL proyek Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Kunci publik (anon) Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Kunci service role — **hanya server** |
-| `KMS_MASTER_KEY` | Kunci master simulasi KMS — **hanya server** |
-| `RPC_URL` | Endpoint RPC blockchain |
-| `CHAIN_ID` | ID jaringan blockchain |
-| `DIPLOMA_REGISTRY_ADDRESS` | Alamat kontrak DiplomaRegistry |
-| `RATE_LIMIT_*` | Konfigurasi rate limiting |
+| `NEXT_PUBLIC_APP_URL` | URL aplikasi (dipakai di QR) |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Koneksi Supabase (publik) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Melewati RLS — **hanya server** |
+| `RPC_URL`, `CHAIN_ID`, `DIPLOMA_REGISTRY_ADDRESS` | Koneksi blockchain |
+| `ISSUER_RELAYER_PRIVATE_KEY` | Kunci dompet relayer — **hanya server** |
+| `MAX_UPLOAD_BYTES`, `RATE_LIMIT_*` | Batas unggahan & rate limit |
 
-> ⚠️ Jangan pernah melakukan commit file `.env` / `.env.local`.
+> ⚠️ Jangan pernah commit `.env` / `.env.local`. Di Vercel, simpan secret sebagai *Sensitive Environment Variables*.
 
 ---
 
 ## 🛡️ Pipeline CI/CD
 
-Setiap *push* dan *pull request* menjalankan:
+Setiap *push* dan *pull request* ke `main` menjalankan job paralel berikut. Pipeline **gagal** bila ada temuan berisiko tinggi.
 
-1. **Type check & build** — TypeScript, `next build`, dan pemeriksaan ABI tetap sinkron dengan kontrak.
-2. **Unit test kontrak** — Hardhat.
-3. **SAST smart contract** — Slither (hasil SARIF ke tab Security GitHub) dan Mythril (*symbolic execution*).
-4. **SAST aplikasi** — CodeQL `security-extended`.
-5. **SCA** — `npm audit` (high+), *dependency review* pada PR, Dependabot.
-6. **Secret scanning** — Gitleaks.
-7. **Security gate** — deployment hanya boleh berjalan bila semua pemeriksaan lolos.
+| Job | Tool | Gagal bila |
+|---|---|---|
+| App | `tsc`, `next build`, cek ABI sinkron | Error build/type |
+| Contracts | Hardhat test | Test gagal |
+| SAST kontrak | Slither | Temuan ≥ medium |
+| SAST aplikasi | Semgrep (OWASP Top 10) | Temuan severity ERROR |
+| SCA | `npm audit`, dependency review | Kerentanan ≥ high |
+| Secrets | Gitleaks | Secret terdeteksi |
+| **Security gate** | — | Salah satu job di atas gagal |
 
 ---
 
@@ -354,9 +213,3 @@ Setiap *push* dan *pull request* menjalankan:
 2. Commit dengan format *Conventional Commits*.
 3. Pastikan semua pemeriksaan CI lolos.
 4. Buka Pull Request dan minta review.
-
----
-
-## 📄 Lisensi
-
-Ditentukan oleh tim proyek (mis. MIT).

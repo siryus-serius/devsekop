@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: { default: "Vault Ijazah Digital", template: "%s | Vault Ijazah Digital" },
   description:
-    "Penerbitan, penyimpanan aman, dan verifikasi publik ijazah digital berbasis blockchain. Verifikasi keaslian ijazah secara instan tanpa login.",
+    "Penerbitan dan verifikasi publik ijazah digital berbasis blockchain. Verifikasi keaslian ijazah secara instan tanpa login.",
   openGraph: { type: "website", locale: "id_ID", siteName: "Vault Ijazah Digital" },
 };
 

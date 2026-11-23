@@ -1,69 +1,40 @@
 /**
  * Deploy DiplomaRegistry.
  *
- *   npm run chain:deploy:local      (Hardhat node lokal)
- *   npm run chain:deploy:sepolia    (butuh SEPOLIA_RPC_URL & DEPLOYER_PRIVATE_KEY)
+ *   npm run chain:deploy:local     (Hardhat node lokal)
+ *   npm run chain:deploy:testnet   (Base Sepolia, butuh BASE_SEPOLIA_RPC_URL & DEPLOYER_PRIVATE_KEY)
  *
- * Variabel lingkungan (dibaca dari .env.local):
- *   KMS_ISSUER_SIGNER_KEY       -> alamat signer KMS diturunkan dari kunci ini
- *   ISSUER_RELAYER_PRIVATE_KEY  -> relayer server otomatis menjadi approver
- *   APPROVER_ADDRESSES          -> (opsional) approver tambahan, pisahkan dengan koma
- *   MULTISIG_THRESHOLD          -> jumlah persetujuan minimum (default 2)
- *   REGISTRY_ADMIN_ADDRESS      -> (opsional) admin; di produksi gunakan alamat Safe multisig
+ * Peran:
+ *   admin  = REGISTRY_ADMIN_ADDRESS, atau akun deployer bila kosong
+ *   issuer = alamat dari ISSUER_RELAYER_PRIVATE_KEY (dompet server yang mengirim transaksi)
  */
 import hre from "hardhat";
-import { getAddress, isAddress, type Address, type Hex } from "viem";
+import type { Address, Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
-function requireKey(name: string): Hex {
-  const value = process.env[name];
-  if (!value || !/^0x[0-9a-fA-F]{64}$/.test(value)) {
-    throw new Error(`${name} belum di-set atau formatnya salah (harus 0x + 64 hex). Jalankan: npm run keys:generate`);
-  }
-  return value as Hex;
-}
-
 async function main() {
-  const [deployer, , secondLocalApprover] = await hre.viem.getWalletClients();
+  const relayerKey = process.env.ISSUER_RELAYER_PRIVATE_KEY;
+  if (!relayerKey || !/^0x[0-9a-fA-F]{64}$/.test(relayerKey)) {
+    throw new Error("ISSUER_RELAYER_PRIVATE_KEY belum di-set (0x + 64 hex). Jalankan: npm run keys:generate");
+  }
+
+  const [deployer] = await hre.viem.getWalletClients();
   if (!deployer) throw new Error("Tidak ada akun deployer.");
 
-  const kmsSigner = privateKeyToAccount(requireKey("KMS_ISSUER_SIGNER_KEY")).address;
-  const relayer = privateKeyToAccount(requireKey("ISSUER_RELAYER_PRIVATE_KEY")).address;
+  const issuer = privateKeyToAccount(relayerKey as Hex).address;
+  const admin = (process.env.REGISTRY_ADMIN_ADDRESS as Address | undefined) || deployer.account.address;
 
-  const extra = (process.env.APPROVER_ADDRESSES ?? "")
-    .split(",")
-    .map((a) => a.trim())
-    .filter(Boolean)
-    .map((a) => {
-      if (!isAddress(a)) throw new Error(`Alamat approver tidak valid: ${a}`);
-      return getAddress(a);
-    });
+  const registry = await hre.viem.deployContract("DiplomaRegistry", [admin, issuer]);
 
-  // Di jaringan lokal, akun Hardhat #2 dipakai sebagai approver kedua bila tidak ada yang diberikan.
-  const isLocal = hre.network.name === "localhost" || hre.network.name === "hardhat";
-  if (extra.length === 0 && isLocal && secondLocalApprover) extra.push(secondLocalApprover.account.address);
-
-  const approvers = [...new Set<Address>([relayer, ...extra])];
-  const threshold = Number(process.env.MULTISIG_THRESHOLD ?? 2);
-  const admin = (process.env.REGISTRY_ADMIN_ADDRESS as Address | undefined) ?? deployer.account.address;
-
-  if (!isLocal && admin === deployer.account.address) {
-    console.warn("⚠️  REGISTRY_ADMIN_ADDRESS tidak di-set: admin = EOA deployer. Gunakan Safe multisig di produksi.");
+  // Di jaringan lokal, isi saldo relayer agar bisa membayar gas.
+  if (hre.network.name === "localhost" || hre.network.name === "hardhat") {
+    await deployer.sendTransaction({ to: issuer, value: 10n ** 19n });
   }
 
-  const registry = await hre.viem.deployContract("DiplomaRegistry", [admin, approvers, threshold, kmsSigner]);
-
-  // Danai relayer di jaringan lokal agar bisa membayar gas.
-  if (isLocal) {
-    await deployer.sendTransaction({ to: relayer, value: 10n ** 19n });
-  }
-
-  console.log("DiplomaRegistry  :", registry.address);
   console.log("Network          :", hre.network.name);
+  console.log("DiplomaRegistry  :", registry.address);
   console.log("Admin            :", admin);
-  console.log("Approvers        :", approvers.join(", "));
-  console.log("Threshold        :", threshold);
-  console.log("KMS signer       :", kmsSigner);
+  console.log("Issuer (relayer) :", issuer);
   console.log(`\nTambahkan ke .env.local:\nDIPLOMA_REGISTRY_ADDRESS=${registry.address}`);
 }
 

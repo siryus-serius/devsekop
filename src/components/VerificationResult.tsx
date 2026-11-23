@@ -32,7 +32,7 @@ export function VerificationResult({
   result,
   details,
 }: {
-  result: Pick<Result, "status" | "docHash" | "issuedAt" | "revokedAt" | "signer" | "signerIsCurrentIssuer" | "registry" | "chainId">;
+  result: Pick<Result, "status" | "docHash" | "issuedAt" | "revokedAt" | "registry" | "chainId">;
   details?: { label: string; value: string }[];
 }) {
   const s = STYLES[result.status];
@@ -61,10 +61,6 @@ export function VerificationResult({
           )}
           <dt className="font-medium text-slate-600">Hash SHA-256</dt>
           <dd className="font-mono text-xs break-all">{result.docHash}</dd>
-          <dt className="font-medium text-slate-600">Penanda tangan</dt>
-          <dd className="font-mono text-xs break-all">
-            {result.signer} {result.signerIsCurrentIssuer ? "(kunci issuer aktif)" : "(kunci issuer sebelumnya)"}
-          </dd>
           <dt className="font-medium text-slate-600">Kontrak</dt>
           <dd className="font-mono text-xs break-all">
             {result.registry} (chain {result.chainId})

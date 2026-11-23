@@ -16,8 +16,7 @@
     "contracts:abi": "hardhat compile && node scripts/export-abi.mjs",
     "chain:node": "hardhat node",
     "chain:deploy:local": "hardhat run scripts/deploy.ts --network localhost",
-    "chain:deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
-    "chain:approve": "hardhat run scripts/approve.ts",
+    "chain:deploy:testnet": "hardhat run scripts/deploy.ts --network baseSepolia",
     "keys:generate": "node scripts/generate-keys.mjs",
     "audit:deps": "npm audit --omit=dev --audit-level=high"
   },

@@ -8,18 +8,8 @@ export const diplomaRegistryAbi = [
         "type": "address"
       },
       {
-        "internalType": "address[]",
-        "name": "approvers",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint8",
-        "name": "threshold_",
-        "type": "uint8"
-      },
-      {
         "internalType": "address",
-        "name": "kmsSigner_",
+        "name": "issuer",
         "type": "address"
       }
     ],
@@ -49,11 +39,6 @@ export const diplomaRegistryAbi = [
   },
   {
     "inputs": [],
-    "name": "AlreadyApproved",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "AlreadyIssued",
     "type": "error"
   },
@@ -69,32 +54,7 @@ export const diplomaRegistryAbi = [
   },
   {
     "inputs": [],
-    "name": "InvalidSignature",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidThreshold",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NotIssued",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ProposalAlreadyExecuted",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ProposalExpired",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "UnknownProposal",
     "type": "error"
   },
   {
@@ -118,16 +78,10 @@ export const diplomaRegistryAbi = [
         "type": "bytes32"
       },
       {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "issuedAt",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "address",
+        "name": "issuer",
+        "type": "address"
       }
     ],
     "name": "DiplomaIssued",
@@ -143,94 +97,13 @@ export const diplomaRegistryAbi = [
         "type": "bytes32"
       },
       {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "revokedAt",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "address",
+        "name": "revoker",
+        "type": "address"
       }
     ],
     "name": "DiplomaRevoked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousSigner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newSigner",
-        "type": "address"
-      }
-    ],
-    "name": "KmsSignerUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "approver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "approvals",
-        "type": "uint8"
-      }
-    ],
-    "name": "ProposalApproved",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "enum DiplomaRegistry.Action",
-        "name": "action",
-        "type": "uint8"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "serialKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "proposer",
-        "type": "address"
-      }
-    ],
-    "name": "ProposalCreated",
     "type": "event"
   },
   {
@@ -309,38 +182,6 @@ export const diplomaRegistryAbi = [
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "previousThreshold",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "newThreshold",
-        "type": "uint8"
-      }
-    ],
-    "name": "ThresholdUpdated",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "APPROVER_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
@@ -355,38 +196,12 @@ export const diplomaRegistryAbi = [
   },
   {
     "inputs": [],
-    "name": "PROPOSAL_TTL",
+    "name": "ISSUER_ROLE",
     "outputs": [
       {
-        "internalType": "uint64",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      }
-    ],
-    "name": "approve",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "approverCount",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -428,16 +243,6 @@ export const diplomaRegistryAbi = [
             "internalType": "uint64",
             "name": "revokedAt",
             "type": "uint64"
-          },
-          {
-            "internalType": "bool",
-            "name": "revoked",
-            "type": "bool"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "internalType": "struct DiplomaRegistry.Diploma",
@@ -479,76 +284,10 @@ export const diplomaRegistryAbi = [
             "internalType": "uint64",
             "name": "revokedAt",
             "type": "uint64"
-          },
-          {
-            "internalType": "bool",
-            "name": "revoked",
-            "type": "bool"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "internalType": "struct DiplomaRegistry.Diploma",
         "name": "diploma",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getProposal",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "enum DiplomaRegistry.Action",
-            "name": "action",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "serialKey",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "docHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          },
-          {
-            "internalType": "uint64",
-            "name": "createdAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "approvals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "executed",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct DiplomaRegistry.Proposal",
-        "name": "",
         "type": "tuple"
       }
     ],
@@ -595,30 +334,6 @@ export const diplomaRegistryAbi = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "approver",
-        "type": "address"
-      }
-    ],
-    "name": "hasApproved",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -653,88 +368,8 @@ export const diplomaRegistryAbi = [
         "type": "bytes32"
       }
     ],
-    "name": "issuanceDigest",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "kmsSigner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "proposalCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "serialKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "docHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "signature",
-        "type": "bytes"
-      }
-    ],
-    "name": "proposeIssue",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "serialKey",
-        "type": "bytes32"
-      }
-    ],
-    "name": "proposeRevoke",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      }
-    ],
+    "name": "issue",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -760,6 +395,19 @@ export const diplomaRegistryAbi = [
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "serialKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "revoke",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
       },
@@ -770,51 +418,6 @@ export const diplomaRegistryAbi = [
       }
     ],
     "name": "revokeRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "docHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "serialOfHash",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "serialKey",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newSigner",
-        "type": "address"
-      }
-    ],
-    "name": "setKmsSigner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "newThreshold",
-        "type": "uint8"
-      }
-    ],
-    "name": "setThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -833,19 +436,6 @@ export const diplomaRegistryAbi = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "threshold",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
       }
     ],
     "stateMutability": "view",

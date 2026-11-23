@@ -5,13 +5,12 @@ import { NextResponse, type NextRequest } from "next/server";
  * Lapisan middleware (bagian dari "DMZ" aplikasi):
  *  - Content-Security-Policy berbasis nonce per request (mitigasi XSS)
  *  - Penyegaran sesi Supabase (JWT) via cookie httpOnly
- *  - Gate autentikasi + MFA (AAL2) untuk area /vault dan /issuer (REQ-03)
- *  - CORS allowlist & proteksi CSRF berbasis Origin untuk /api (REQ-05)
+ *  - Gate autentikasi + MFA (AAL2) untuk area /issuer (REQ-03)
+ *  - Proteksi CSRF berbasis Origin untuk /api (REQ-05)
  * Otorisasi peran yang sesungguhnya dilakukan di server (requireRole) dan RLS (REQ-06).
  */
 
-const PROTECTED_PREFIXES = ["/vault", "/issuer"];
-const PUBLIC_CORS_PATHS = ["/api/verify"];
+const PROTECTED_PREFIXES = ["/issuer"];
 
 function buildCsp(nonce: string): string {
   const isDev = process.env.NODE_ENV !== "production";
@@ -31,36 +30,10 @@ function buildCsp(nonce: string): string {
   ].join("; ");
 }
 
-function allowedOrigins(request: NextRequest): Set<string> {
-  const extra = (process.env.CORS_ALLOWED_ORIGINS ?? "")
-    .split(",")
-    .map((o) => o.trim())
-    .filter(Boolean);
-  return new Set([request.nextUrl.origin, process.env.NEXT_PUBLIC_APP_URL ?? "", ...extra].filter(Boolean));
-}
-
+/** CSRF: request yang mengubah state wajib berasal dari origin aplikasi sendiri. */
 function handleApi(request: NextRequest): NextResponse | null {
   const origin = request.headers.get("origin");
-  const isPublicCors = PUBLIC_CORS_PATHS.some((p) => request.nextUrl.pathname.startsWith(p));
-  const origins = allowedOrigins(request);
-  const originAllowed = !origin || origin === request.nextUrl.origin || (isPublicCors && origins.has(origin));
-
-  if (request.method === "OPTIONS") {
-    if (!isPublicCors || !origin || !originAllowed) return new NextResponse(null, { status: 403 });
-    return new NextResponse(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Max-Age": "600",
-        Vary: "Origin",
-      },
-    });
-  }
-
-  // CSRF: request yang mengubah state wajib berasal dari origin yang sama (atau allowlist publik).
-  if (!["GET", "HEAD"].includes(request.method) && origin && !originAllowed) {
+  if (!["GET", "HEAD"].includes(request.method) && origin && origin !== request.nextUrl.origin) {
     return NextResponse.json({ error: "Origin tidak diizinkan." }, { status: 403 });
   }
   return null;
@@ -125,13 +98,6 @@ export async function middleware(request: NextRequest) {
   }
 
   response.headers.set("Content-Security-Policy", csp);
-  if (pathname.startsWith("/api/verify")) {
-    const origin = request.headers.get("origin");
-    if (origin && allowedOrigins(request).has(origin)) {
-      response.headers.set("Access-Control-Allow-Origin", origin);
-      response.headers.set("Vary", "Origin");
-    }
-  }
   return response;
 }
 

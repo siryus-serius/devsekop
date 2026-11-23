@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Hex } from "viem";
+import { audit } from "@/lib/audit";
 import { verifyByHash, verifyBySerial } from "@/lib/chain/registry";
 import { serverEnv } from "@/lib/env";
 import { rateLimit, rateLimitHeaders } from "@/lib/security/rate-limit";
@@ -20,9 +21,11 @@ const bodySchema = z.union([
 
 export async function POST(request: Request) {
   const env = serverEnv();
-  const limit = rateLimit(`verify:${clientIp(request.headers)}`, env.RATE_LIMIT_VERIFY_MAX, env.RATE_LIMIT_WINDOW_MS);
+  const ip = clientIp(request.headers);
+  const limit = rateLimit(`verify:${ip}`, env.RATE_LIMIT_VERIFY_MAX, env.RATE_LIMIT_WINDOW_MS);
   const headers = rateLimitHeaders(limit, env.RATE_LIMIT_VERIFY_MAX);
   if (!limit.allowed) {
+    await audit({ action: "verify.rate_limited", level: "warning", ip });
     return Response.json({ error: "Terlalu banyak permintaan. Coba lagi nanti." }, { status: 429, headers });
   }
 
@@ -40,6 +43,13 @@ export async function POST(request: Request) {
       "hash" in parsed.data
         ? await verifyByHash(parsed.data.hash.toLowerCase() as Hex)
         : await verifyBySerial(parsed.data.serial);
+    // Dokumen tidak dikenal = indikasi pemalsuan; dicatat sebagai warning untuk monitoring.
+    await audit({
+      action: `verify.${result.status}`,
+      level: result.status === "not_found" ? "warning" : "info",
+      ip,
+      metadata: { by: "hash" in parsed.data ? "hash" : "serial" },
+    });
     return Response.json(result, { headers });
   } catch (err) {
     console.error("[verify] gagal membaca blockchain:", err);

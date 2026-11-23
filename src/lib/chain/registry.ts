@@ -5,8 +5,6 @@ import {
   defineChain,
   http,
   keccak256,
-  parseEventLogs,
-  recoverMessageAddress,
   toBytes,
   zeroHash,
   type Address,
@@ -14,11 +12,11 @@ import {
   type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { hardhat, polygonAmoy, sepolia } from "viem/chains";
+import { baseSepolia, hardhat } from "viem/chains";
 import { diplomaRegistryAbi } from "@/lib/chain/abi";
 import { serverEnv } from "@/lib/env";
 
-const KNOWN_CHAINS: Chain[] = [hardhat, sepolia, polygonAmoy];
+const KNOWN_CHAINS: Chain[] = [hardhat, baseSepolia];
 
 function resolveChain(): Chain {
   const { CHAIN_ID, RPC_URL } = serverEnv();
@@ -43,6 +41,7 @@ function getPublicClient() {
   return publicClient;
 }
 
+/** Dompet server (relayer) yang memegang ISSUER_ROLE dan membayar gas. */
 function getRelayerWallet() {
   const env = serverEnv();
   return createWalletClient({
@@ -57,6 +56,16 @@ export function serialKeyOf(serial: string): Hex {
   return keccak256(toBytes(serial.trim()));
 }
 
+/** Link block explorer untuk transaksi (kosong bila jaringan lokal). */
+export function explorerTxUrl(txHash: string): string | null {
+  const explorer = resolveChain().blockExplorers?.default.url;
+  return explorer ? `${explorer}/tx/${txHash}` : null;
+}
+
+// ---------------------------------------------------------------------------
+// Baca (gratis, tanpa gas)
+// ---------------------------------------------------------------------------
+
 export type VerificationStatus = "valid" | "revoked" | "not_found";
 
 export interface VerificationResult {
@@ -65,53 +74,27 @@ export interface VerificationResult {
   docHash: Hex | null;
   issuedAt: string | null;
   revokedAt: string | null;
-  signer: Address | null;
-  signerIsCurrentIssuer: boolean;
   registry: Address;
   chainId: number;
 }
 
 const STATUS_MAP: Record<number, VerificationStatus> = { 0: "not_found", 1: "valid", 2: "revoked" };
 
-type OnChainDiploma = { docHash: Hex; issuedAt: bigint; revokedAt: bigint; revoked: boolean; signature: Hex };
+type OnChainDiploma = { docHash: Hex; issuedAt: bigint; revokedAt: bigint };
 
-async function buildResult(statusCode: number, serialKey: Hex, diploma: OnChainDiploma): Promise<VerificationResult> {
-  const base = { registry: registryAddress(), chainId: resolveChain().id };
+const toIso = (seconds: bigint) => (seconds === 0n ? null : new Date(Number(seconds) * 1000).toISOString());
+
+function buildResult(statusCode: number, serialKey: Hex, diploma: OnChainDiploma): VerificationResult {
   const status = STATUS_MAP[statusCode] ?? "not_found";
-  if (status === "not_found" || serialKey === zeroHash) {
-    return {
-      ...base,
-      status: "not_found",
-      serialKey: null,
-      docHash: null,
-      issuedAt: null,
-      revokedAt: null,
-      signer: null,
-      signerIsCurrentIssuer: false,
-    };
-  }
-
-  const client = getPublicClient();
-  const [digest, currentSigner] = await Promise.all([
-    client.readContract({
-      address: registryAddress(),
-      abi: diplomaRegistryAbi,
-      functionName: "issuanceDigest",
-      args: [serialKey, diploma.docHash],
-    }),
-    client.readContract({ address: registryAddress(), abi: diplomaRegistryAbi, functionName: "kmsSigner" }),
-  ]);
-  const signer = await recoverMessageAddress({ message: { raw: digest }, signature: diploma.signature });
-
+  const found = status !== "not_found" && serialKey !== zeroHash;
   return {
-    ...base,
-    status,
-    serialKey,
-    docHash: diploma.docHash,
-    issuedAt: new Date(Number(diploma.issuedAt) * 1000).toISOString(),
-    revokedAt: diploma.revoked ? new Date(Number(diploma.revokedAt) * 1000).toISOString() : null,
-    signer,
-    signerIsCurrentIssuer: signer.toLowerCase() === currentSigner.toLowerCase(),
+    status: found ? status : "not_found",
+    serialKey: found ? serialKey : null,
+    docHash: found ? diploma.docHash : null,
+    issuedAt: found ? toIso(diploma.issuedAt) : null,
+    revokedAt: found ? toIso(diploma.revokedAt) : null,
+    registry: registryAddress(),
+    chainId: resolveChain().id,
   };
 }
 
@@ -138,28 +121,14 @@ export async function verifyBySerial(serial: string): Promise<VerificationResult
   return buildResult(status, serialKey, diploma);
 }
 
-export async function getIssuanceDigest(serialKey: Hex, docHash: Hex): Promise<Hex> {
-  return getPublicClient().readContract({
-    address: registryAddress(),
-    abi: diplomaRegistryAbi,
-    functionName: "issuanceDigest",
-    args: [serialKey, docHash],
-  });
-}
+// ---------------------------------------------------------------------------
+// Tulis (dikirim oleh relayer, butuh gas)
+// ---------------------------------------------------------------------------
 
-export interface ProposalOutcome {
-  txHash: Hex;
-  proposalId: bigint;
-  executed: boolean;
-}
-
-async function submit(
-  functionName: "proposeIssue" | "proposeRevoke",
-  args: readonly [Hex, Hex, Hex] | readonly [Hex],
-): Promise<ProposalOutcome> {
+async function send(functionName: "issue" | "revoke", args: readonly [Hex, Hex] | readonly [Hex]): Promise<Hex> {
   const wallet = getRelayerWallet();
   const client = getPublicClient();
-  // simulateContract menangkap revert (mis. AlreadyIssued) sebelum mengirim transaksi.
+  // Simulasi dulu: bila akan gagal (mis. AlreadyIssued), berhenti sebelum gas terpakai.
   const { request } = await client.simulateContract({
     address: registryAddress(),
     abi: diplomaRegistryAbi,
@@ -170,18 +139,15 @@ async function submit(
   const txHash = await wallet.writeContract(request as never);
   const receipt = await client.waitForTransactionReceipt({ hash: txHash });
   if (receipt.status !== "success") throw new Error(`Transaksi gagal: ${txHash}`);
-
-  const logs = parseEventLogs({ abi: diplomaRegistryAbi, logs: receipt.logs });
-  const created = logs.find((l) => l.eventName === "ProposalCreated");
-  if (!created || created.eventName !== "ProposalCreated") throw new Error("Event ProposalCreated tidak ditemukan");
-  const executed = logs.some((l) => l.eventName === "DiplomaIssued" || l.eventName === "DiplomaRevoked");
-  return { txHash, proposalId: created.args.proposalId, executed };
+  return txHash;
 }
 
-export function proposeIssue(serialKey: Hex, docHash: Hex, signature: Hex) {
-  return submit("proposeIssue", [serialKey, docHash, signature] as const);
+/** Mencatat ijazah ke blockchain. Mengembalikan tx hash. */
+export function issueOnChain(serialKey: Hex, docHash: Hex) {
+  return send("issue", [serialKey, docHash] as const);
 }
 
-export function proposeRevoke(serialKey: Hex) {
-  return submit("proposeRevoke", [serialKey] as const);
+/** Mencabut ijazah di blockchain. Mengembalikan tx hash. */
+export function revokeOnChain(serialKey: Hex) {
+  return send("revoke", [serialKey] as const);
 }

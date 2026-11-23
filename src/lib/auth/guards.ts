@@ -1,14 +1,13 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export type AppRole = "holder" | "issuer" | "admin";
+export type AppRole = "issuer" | "admin";
 
 export interface AuthContext {
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
   userId: string;
   email: string;
   role: AppRole;
-  institutionId: string | null;
 }
 
 export class AuthError extends Error {
@@ -21,10 +20,10 @@ export class AuthError extends Error {
 }
 
 /**
- * Otorisasi server-side (REQ-03 & REQ-06):
- *  1. JWT divalidasi ke Supabase Auth (getUser, bukan getSession dari cookie).
+ * Otorisasi server-side:
+ *  1. JWT divalidasi ke Supabase Auth (getUser, bukan sekadar membaca cookie).
  *  2. Sesi wajib AAL2 (MFA terverifikasi).
- *  3. Peran dibaca dari tabel profiles (bukan dari klaim yang dapat dimanipulasi klien).
+ *  3. Peran dibaca dari tabel profiles, bukan dari data yang dikirim klien.
  */
 export async function requireRole(allowed: readonly AppRole[]): Promise<AuthContext> {
   const supabase = await createSupabaseServerClient();
@@ -36,20 +35,11 @@ export async function requireRole(allowed: readonly AppRole[]): Promise<AuthCont
   const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (aal?.currentLevel !== "aal2") throw new AuthError(401, "Verifikasi MFA diperlukan.");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, institution_id, email")
-    .eq("id", user.id)
-    .single();
-  if (!profile || !allowed.includes(profile.role as AppRole)) throw new AuthError(403, "Akses ditolak.");
+  const { data: profile } = await supabase.from("profiles").select("role, email").eq("id", user.id).single();
+  const role = profile?.role as AppRole | null | undefined;
+  if (!role || !allowed.includes(role)) throw new AuthError(403, "Akses ditolak.");
 
-  return {
-    supabase,
-    userId: user.id,
-    email: profile.email as string,
-    role: profile.role as AppRole,
-    institutionId: (profile.institution_id as string | null) ?? null,
-  };
+  return { supabase, userId: user.id, email: profile!.email as string, role };
 }
 
 export function authErrorResponse(err: unknown): Response | null {
