@@ -23,7 +23,7 @@ jobs:
     name: App — typecheck & build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -46,7 +46,7 @@ jobs:
     name: Contracts — test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -64,7 +64,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Kompilasi dilakukan di sini (sama seperti job Contracts), bukan di dalam container Slither,
       # agar instalasi dependensi tidak gagal. Slither cukup membaca hasil kompilasi Hardhat.
       - uses: actions/setup-node@v4
@@ -97,7 +97,7 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Semgrep scan
         run: >-
           semgrep scan
@@ -117,7 +117,7 @@ jobs:
     name: SCA — Dependency scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -141,7 +141,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       # CLI resmi (checksum diverifikasi) memindai SELURUH riwayat git, aman juga setelah force push.
@@ -175,7 +175,7 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}
       TRIVY_VERSION: 0.76.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build image
         run: docker build -t "$IMAGE:${{ github.sha }}" .
       - name: Install Trivy (checksum diverifikasi)
@@ -209,7 +209,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
