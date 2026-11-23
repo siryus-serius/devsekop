@@ -1,0 +1,173 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 2 * * 1" # pemindaian mingguan untuk CVE baru
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Build, type check & unit test aplikasi
+  # ---------------------------------------------------------------------------
+  app:
+    name: App — typecheck & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx hardhat compile
+      - name: Pastikan ABI yang di-commit sinkron dengan kontrak
+        run: node scripts/export-abi.mjs && git diff --exit-code src/lib/chain/abi.ts
+      - run: npm run typecheck
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: https://example.invalid
+          NEXT_PUBLIC_SUPABASE_URL: https://example.invalid
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+
+  # ---------------------------------------------------------------------------
+  # 2. Unit test smart contract
+  # ---------------------------------------------------------------------------
+  contracts:
+    name: Contracts — test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx hardhat test
+
+  # ---------------------------------------------------------------------------
+  # 3. SAST smart contract — Slither
+  # ---------------------------------------------------------------------------
+  slither:
+    name: SAST — Slither
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crytic/slither-action@v0.4.1
+        id: slither
+        with:
+          node-version: 22
+          fail-on: medium
+          sarif: results.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always() && steps.slither.outputs.sarif != ''
+        with:
+          sarif_file: ${{ steps.slither.outputs.sarif }}
+          category: slither
+
+  # ---------------------------------------------------------------------------
+  # 4. SAST smart contract — Mythril (symbolic execution)
+  # ---------------------------------------------------------------------------
+  mythril:
+    name: SAST — Mythril
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install mythril
+      - name: Analisis DiplomaRegistry
+        run: |
+          myth analyze contracts/DiplomaRegistry.sol \
+            --solv 0.8.28 \
+            --solc-json mythril.solc.json \
+            --execution-timeout 600 \
+            --max-depth 22 \
+            -o markdown | tee mythril-report.md
+          # Mythril keluar dengan kode != 0 bila menemukan isu
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mythril-report
+          path: mythril-report.md
+
+  # ---------------------------------------------------------------------------
+  # 5. SAST aplikasi — CodeQL (JavaScript/TypeScript)
+  # ---------------------------------------------------------------------------
+  codeql:
+    name: SAST — CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3
+
+  # ---------------------------------------------------------------------------
+  # 6. SCA — kerentanan dependensi
+  # ---------------------------------------------------------------------------
+  sca:
+    name: SCA — Dependency scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: npm audit (dependensi produksi)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Dependency review (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  # ---------------------------------------------------------------------------
+  # 7. Secret scanning
+  # ---------------------------------------------------------------------------
+  secrets:
+    name: Secret scan — Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  # Gerbang keamanan: deployment hanya boleh berjalan bila semua pemeriksaan lolos
+  # ---------------------------------------------------------------------------
+  security-gate:
+    name: Security gate
+    runs-on: ubuntu-latest
+    needs: [app, contracts, slither, mythril, codeql, sca, secrets]
+    steps:
+      - run: echo "Semua pemeriksaan keamanan lolos — siap untuk deployment."

@@ -1,0 +1,44 @@
+# Dependensi
+node_modules/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Hardhat
+artifacts/
+cache/
+typechain-types/
+coverage/
+coverage.json
+ignition/deployments/chain-31337/
+
+# Secret & environment — JANGAN di-commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+keystore/
+
+# Supabase lokal
+supabase/.branches/
+supabase/.temp/
+
+# Laporan keamanan lokal
+slither-report.*
+mythril-report.*
+*.sarif
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Log
+npm-debug.log*
+*.log
