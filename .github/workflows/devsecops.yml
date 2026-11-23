@@ -73,7 +73,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx hardhat compile
-      - uses: crytic/slither-action@v0.4.1
+      - uses: crytic/slither-action@v0.4.2
         id: slither
         with:
           ignore-compile: true
