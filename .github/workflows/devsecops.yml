@@ -65,10 +65,18 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v4
+      # Kompilasi dilakukan di sini (sama seperti job Contracts), bukan di dalam container Slither,
+      # agar instalasi dependensi tidak gagal. Slither cukup membaca hasil kompilasi Hardhat.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx hardhat compile
       - uses: crytic/slither-action@v0.4.1
         id: slither
         with:
-          node-version: 24
+          ignore-compile: true
           fail-on: medium
           sarif: results.sarif
       - uses: github/codeql-action/upload-sarif@v3
